@@ -18316,7 +18316,7 @@ function App() {
           )
         )
         , tab==="records" && (
-          React.createElement('div', { style: { display:"flex", flexDirection:"column", gap:10 }, onTouchStart: handleTouchStart, onTouchEnd: handleTouchEnd}
+          React.createElement('div', { style: { display:"flex", flexDirection:"column", gap:10 }}
 
             , React.createElement('div', { style: { display:"grid", gridTemplateColumns:"1fr auto", gap:8 }}
               , React.createElement('button', { onClick: ()=>{ setShowAdd(!showAdd); setShowSwitchConfirm(false); setPendingWorkTime(""); }, style: {
@@ -18737,7 +18737,6 @@ function App() {
                   {label:"✏ 編集ボタン", desc:"登録済みの記録を修正できます。"},
                   {label:"✕ 削除ボタン", desc:"不要な記録を削除します。"},
                   {label:"届出済 / 未提出", desc:"年休届の提出状況を管理できます。タップするたびに「未提出」（赤）↔「届出済」（緑）が切り替わります。"},
-                  {label:"左右スワイプ", desc:"使用記録タブ内の空白エリアを左右にフリックすると、隣のタブへ移動できます。入力欄やボタン上からのスワイプは無視されます。"},
                 ],
               },
               {
@@ -18749,7 +18748,7 @@ function App() {
                   {label:"残日数", desc:"年休残時間をもとに、現在何日分相当の年休が残っているかを示します。"},
                   {label:"日数判定", desc:"残時間をもとに算出した現在の残日数判定値です。"},
                   {label:"目標圏内 / 目標超過", desc:"判定日数が目標日数以上なら「目標圏内」（青）、下回る場合は「目標超過」（赤・点滅）で表示されます。"},
-                  {label:"基準値との差", desc:"現在の残時間と目標日数に対応する基準値との差です。プラスなら余裕あり、マイナスなら消化が必要です。"},
+                  {label:"基準値との差", desc:"現在の残時間と目標日数に対応する基準値との差です。"},
                 ],
               },
               {
