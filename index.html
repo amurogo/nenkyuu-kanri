@@ -18034,7 +18034,7 @@ function App() {
     }}
       , React.createElement('span', { style: { fontSize:20, lineHeight:1 }}, TAB_ICONS[id])
       , React.createElement('span', { style: {
-        fontSize:10, fontWeight:tab===id?700:400,
+        fontSize:12, fontWeight:tab===id?700:400,
         borderTop: tab===id?"2px solid #6366f1":"2px solid transparent",
         paddingTop:3, width:"100%", textAlign:"center",
       }}, lbl)
@@ -18170,13 +18170,13 @@ function App() {
             /* 使用・残・残日数 */
             , React.createElement('div', { style: { display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:10 }}
 
-              /* 使用時間 */
+              /* 消費時間 */
               , React.createElement('div', { style: {
                 background:"rgba(255,255,255,0.05)", border:"1px solid rgba(255,255,255,0.08)",
                 borderRadius:12, padding:"12px 8px",
                 display:"flex", flexDirection:"column", alignItems:"center",
               }}
-                , React.createElement('div', { style: { fontSize:12, color:"#cbd5e1", marginBottom:8 }}, "使用時間")
+                , React.createElement('div', { style: { fontSize:12, color:"#cbd5e1", marginBottom:8 }}, "消費時間")
                 , React.createElement('div', { style: { flex:1, display:"flex", alignItems:"center", justifyContent:"center" }}
                   , React.createElement('span', { style: { fontSize:22, fontWeight:700, color:"#8b5cf6", lineHeight:1 }}
                     , mmHHMM(usedMin)
@@ -18240,19 +18240,19 @@ function App() {
                 )
               )
               , React.createElement('div', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 1011}}
-                , React.createElement('div', { style: { fontSize:13, color:"#cbd5e1", marginBottom:4 }}, "日数切り替わり残時間")
+                , React.createElement('div', { style: { fontSize:13, color:"#cbd5e1", marginBottom:4 }}, dayJudge===0 ? (prevRem>=0 ? "前年度分使い切りまでの時間" : "今年度分使い切りまでの時間") : (dayJudge-1)+"日に切り替わるまでの時間")
                 , React.createElement('div', { style: { fontSize:26, fontWeight:700, color:"#34d399" }}
-                  , mmHHMM(switchMin)
+                  , mmHHMM(dayJudge===0 ? activeMin : switchMin)
                 )
                 , React.createElement('div', { style: { fontSize:12, color:"#64748b", marginTop:2 }}
-                  , remSub>halfWpd?"端数 − 半日":"端数 + 半日"
+                  , dayJudge===0 ? "年休残時間と同じ値" : remSub>halfWpd?"端数 − 半日":"端数 + 半日"
                 )
               )
             )
 
             /* 目標日数 */
             , React.createElement('div', { style: { background:"rgba(255,255,255,0.05)", border:"1px solid rgba(255,255,255,0.08)", borderRadius:12, padding:14 }}
-              , React.createElement('div', { style: { fontSize:13, color:"#cbd5e1", marginBottom:10 }}, "目標日数設定")
+              , React.createElement('div', { style: { fontSize:13, color:"#cbd5e1", marginBottom:10 }}, "目標残日数設定")
               , React.createElement('div', { style: { display:"flex", alignItems:"center", gap:10 }}
                 , React.createElement('button', { onClick: ()=>setTDays(d=>Math.max(0,d-1)), style: {
                   width:38,height:38, background:"rgba(99,102,241,0.2)", border:"1px solid rgba(99,102,241,0.4)",
@@ -18270,7 +18270,7 @@ function App() {
                     background:"rgba(52,211,153,0.1)",
                     border:`1px solid ${vsTgt>=0?"rgba(52,211,153,0.4)":"rgba(248,113,113,0.4)"}`,
                     borderRadius:8, padding:"8px 10px" }}
-                    , React.createElement('div', { style: { fontSize:13, color:"#cbd5e1" }}, "目標残時間との差")
+                    , React.createElement('div', { style: { fontSize:13, color:"#cbd5e1" }}, "基準時間との差")
                     , React.createElement('div', { style: { fontSize:20, fontWeight:700, color:vsTgt>=0?"#34d399":"#f87171" }}
                       , vsTgt>=0?"+":"-", mmHHMM(Math.abs(vsTgt))
                     )
@@ -18280,7 +18280,7 @@ function App() {
                     background:"rgba(96,165,250,0.1)",
                     border:`1px solid ${vsMax>=0?"rgba(96,165,250,0.4)":"rgba(248,113,113,0.4)"}`,
                     borderRadius:8, padding:"8px 10px" }}
-                    , React.createElement('div', { style: { fontSize:13, color:"#cbd5e1" }}, "日数切替時間までの差")
+                    , React.createElement('div', { style: { fontSize:13, color:"#cbd5e1" }}, "最大ここまで休める！")
                     , React.createElement('div', { style: { fontSize:20, fontWeight:700, color:vsMax>=0?"#60a5fa":"#f87171" }}
                       , vsMax>=0?"+":"-", mmHHMM(Math.abs(vsMax))
                     )
@@ -18658,9 +18658,9 @@ function App() {
                       , isJ && !isT && React.createElement('div', { style: { fontSize:8, color:judgeColor, marginTop:1 }}, "📍 判定" )
                       , isBoth       && React.createElement('div', { style: { fontSize:8, color:"#fbbf24", marginTop:1 }}, "⭐ 目標=判定" )
                     )
-                    /* 基準値列 */
+                    /* 基準時間列 */
                     , React.createElement('div', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 1422}}
-                      , React.createElement('div', { style: { fontSize:10, color:"#94a3b8", marginBottom:2 }}, "基準値")
+                      , React.createElement('div', { style: { fontSize:10, color:"#94a3b8", marginBottom:2 }}, "基準時間")
                       , React.createElement('div', { style: { fontSize:14, fontWeight:600, color:_nullishCoalesce(valCol, () => ("#34d399")) }}
                         , mmHHMM(row.remainMin)
                       )
@@ -18691,7 +18691,7 @@ function App() {
               {
                 icon:"📋", title:"アプリの概要",
                 color:"#6366f1",
-                body:`このアプリは年次有給休暇（年休）の残時間を管理し、消化ペースが目標に対して適切かどうかを自動で判定するツールです。\nローカルストレージに自動保存されるため、次回開いたときも入力内容が維持されます。\nタブは画面上部のボタンをタップするか、画面を左右にスワイプして切り替えられます。`,
+                body:`このアプリは年次有給休暇（年休）の残時間を管理し、消化ペースが目標に対して適切かどうかを自動で判定するツールです。\nローカルストレージに自動保存されるため、次回開いたときも入力内容が維持されます。\nタブは画面下部のボタンをタップするか、画面を左右にスワイプして切り替えられます。`,
               },
               {
                 icon:"⚙️", title:"最初に設定すること（サマリータブ）",
@@ -18699,8 +18699,8 @@ function App() {
                 items:[
                   {label:"年休所得時間（前年度）", desc:"前年度から持ち越した年休の時間を入力します。年休はまずこの前年度分から優先的に消費されます。"},
                   {label:"年休所得時間（今年度）", desc:"今年度に新たに付与された年休の時間を入力します。前年度分を使い切った後にこの今年度分が消費されます。"},
-                  {label:"所定労働時間", desc:"1日の勤務時間を設定します。「時間」欄をタップするとテンキーが開きます。早見表の基準値・判定時間はこの値から自動計算されます。"},
-                  {label:"目標消化日数", desc:"年休更新までに消化したい年休の日数目標を設定します。早見表の「目標」行もこの値に連動します。"},
+                  {label:"所定労働時間", desc:"1日の勤務時間を設定します。「時間」欄をタップするとテンキーが開きます。早見表の基準時間・判定時間はこの値から自動計算されます。"},
+                  {label:"目標残日数設定", desc:"年休更新までに残しておきたい年休の日数目標を設定します。早見表の「目標」行もこの値に連動します。"},
                 ],
               },
               {
@@ -18731,12 +18731,15 @@ function App() {
                 icon:"📊", title:"サマリーの見方",
                 color:"#10b981",
                 items:[
-                  {label:"使用時間", desc:"これまでの使用記録の合計時間です。"},
+                  {label:"消費時間", desc:"これまでの使用記録の合計消費時間です。"},
                   {label:"年休残時間", desc:"現在消費中の年度（前年度または今年度）の残り時間です。時間の下に「前年度」（紫）または「今年度」（緑）のバッジで現在どちらの年度を消費中か確認できます。"},
                   {label:"残日数", desc:"年休残時間をもとに、現在何日分相当の年休が残っているかを示します。"},
                   {label:"日数判定", desc:"残時間をもとに算出した現在の残日数判定値です。"},
                   {label:"目標圏内 / 目標超過", desc:"判定日数が目標日数以上なら「目標圏内」（青）、下回る場合は「目標超過」（赤・点滅）で表示されます。"},
-                  {label:"基準値との差", desc:"現在の残時間と目標日数に対応する基準値との差です。"},
+                  {label:"基準時間との差", desc:"現在の残時間と目標日数に対応する基準時間との差です。"},
+                  {label:"前年度分／今年度分使い切りまでの時間", desc:"日数判定が0日のときに表示されます。前年度消費中は「前年度分使い切りまでの時間」、今年度消費中は「今年度分使い切りまでの時間」と表示され、値は年休残時間と同じです。0日以外のときは「○○日に切り替わるまでの時間」と表示されます。"},
+                  {label:"最大ここまで休める！", desc:"現在の残時間で最大何時間分まで年休を取得できるかの目安です。"},
+                  {label:"目標残日数設定", desc:"年休更新までに残しておきたい日数目標をここで変更できます。早見表の目標行にも反映されます。"},
                 ],
               },
               {
@@ -18745,7 +18748,7 @@ function App() {
                 body:`残時間が各日数の「日数判定時間」の範囲内に収まっていれば、その日数と判定されます。\n早見表を開くと現在の判定行が自動的に中央にスクロールします。`,
                 items:[
                   {label:"上部インジケーター", desc:"「前年度消費中」または「今年度消費中」と現在の年休残時間を表示します。前年度を超過している場合は超過量も表示されます。"},
-                  {label:"🎯 目標（緑枠）", desc:"設定した目標消化日数の行です。"},
+                  {label:"🎯 目標（緑枠）", desc:"設定した目標残日数の行です。"},
                   {label:"📍 判定（青/ピンク枠）", desc:"現在の残時間から算出された日数判定の行です。目標以上なら青、目標を下回るならピンクで表示されます。"},
                   {label:"⭐ 目標=判定（黄枠）", desc:"目標日数と判定日数が一致している状態です。"},
                 ],
