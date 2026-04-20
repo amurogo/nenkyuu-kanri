@@ -18024,7 +18024,7 @@ function App() {
   const openPad = cfg => setPad(cfg);
   const closePad = () => setPad(null);
 
-  const TAB_ICONS = { main:"📊", records:"📅", hayami:"📋", help:"❓" };
+  const TAB_ICONS = { main:"📋", records:"📅", hayami:"📊", help:"❓" };
   const tabBtn = (id,lbl) => (
     React.createElement('button', { key: id, onClick: ()=>setTab(id), style: {
       flex:1, border:"none", background:"transparent",
@@ -18084,12 +18084,7 @@ function App() {
 
               , React.createElement('input', { type: "file", accept: ".json", onChange: importData, style: {display:"none"}})
             )
-            , React.createElement('button', { onClick: manualSave, style: {
-              background:flash?"linear-gradient(135deg,#34d399,#10b981)":"rgba(99,102,241,0.25)",
-              border:`1px solid ${flash?"rgba(52,211,153,0.6)":"rgba(99,102,241,0.5)"}`,
-              borderRadius:8, padding:"6px 14px",
-              color:flash?"#fff":"#a5b4fc", fontSize:12, fontWeight:600, cursor:"pointer", transition:"all 0.3s",
-            }}, flash?"✓ 保存済":"💾 保存")
+
           )
         )
       )
@@ -18757,8 +18752,8 @@ function App() {
               {
                 icon:"💾", title:"データの保存・管理",
                 color:"#64748b",
+                body:`入力内容はブラウザのローカルストレージに自動保存されます。次回開いたときも内容が維持されます。`,
                 items:[
-                  {label:"💾 保存ボタン", desc:"現在の入力内容をブラウザのローカルストレージに手動保存します。通常は自動保存されますが、念のため操作後に押すことを推奨します。"},
                   {label:"⬇ 出力ボタン", desc:"現在のデータをJSONファイルとしてダウンロードします。バックアップや端末間の移行に使用してください。"},
                   {label:"⬆ 読込ボタン", desc:"出力したJSONファイルを読み込んでデータを復元します。読み込み後はローカルストレージにも自動保存されます。"},
                 ],
