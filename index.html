@@ -18087,9 +18087,9 @@ function App() {
               color:"#34d399", fontSize:12, fontWeight:600, cursor:"pointer",
             }}, "⬇ 出力" )
             , React.createElement('label', { title: "JSONからインポート", style: {
-              background:"rgba(251,191,36,0.15)", border:"1px solid rgba(251,191,36,0.4)",
+              background:"rgba(248,113,113,0.15)", border:"1px solid rgba(248,113,113,0.4)",
               borderRadius:8, padding:"6px 10px",
-              color:"#fbbf24", fontSize:12, fontWeight:600, cursor:"pointer", whiteSpace:"nowrap",
+              color:"#f87171", fontSize:12, fontWeight:600, cursor:"pointer", whiteSpace:"nowrap",
             }}, "⬆ 読込"
 
               , React.createElement('input', { type: "file", accept: ".json", onChange: importData, style: {display:"none"}})
@@ -18127,12 +18127,12 @@ function App() {
                         onConfirm:(h,m)=>{ setPrevH(`${h}:${String(m).padStart(2,"0")}`); closePad(); },
                       }); }, style: {
                         ...IS, cursor:"pointer", userSelect:"none",
-                        color: prevH ? "#c4b5fd" : "#64748b",
+                        color: prevH ? "#93c5fd" : "#64748b",
                         fontWeight:700, fontSize:20,
                         display:"flex", alignItems:"center", justifyContent:"space-between",
                         padding:"10px 14px",
-                        background:"rgba(139,92,246,0.18)",
-                        border:"1px solid rgba(139,92,246,0.55)",
+                        background:"rgba(96,165,250,0.18)",
+                        border:"1px solid rgba(96,165,250,0.55)",
                       }}
                       , React.createElement('span', null, prevH || "0:00")
                       , React.createElement('span', { style: { fontSize:16, color:"#ffffff", marginLeft:8 }}, "⌨")
@@ -18275,11 +18275,11 @@ function App() {
             /* 目標日数 */
             , React.createElement('div', { style: { background:"rgba(255,255,255,0.05)", border:"1px solid rgba(255,255,255,0.08)", borderRadius:12, padding:14 }}
               , React.createElement('div', { style: { fontSize:13, color:"#cbd5e1", marginBottom:10 }}, "目標残日数設定")
-              , React.createElement('div', { style: { display:"flex", alignItems:"center", gap:10 }}
+              , React.createElement('div', { style: { display:"flex", alignItems:"center", justifyContent:"center", gap:10 }}
                 , React.createElement('button', { onClick: ()=>setTDays(d=>Math.max(0,d-1)), style: {
                   width:38,height:38, background:"rgba(99,102,241,0.2)", border:"1px solid rgba(99,102,241,0.4)",
                   borderRadius:8, color:"#a5b4fc", fontSize:20, cursor:"pointer" }}, "−")
-                , React.createElement('div', { style: { flex:1, textAlign:"center", fontSize:28, fontWeight:700, color:"#a5b4fc" }}
+                , React.createElement('div', { style: { textAlign:"center", fontSize:28, fontWeight:700, color:"#ddd6fe", background:"rgba(196,181,253,0.25)", border:"1px solid rgba(196,181,253,1.0)", borderRadius:8, padding:"4px 16px" }}
                   , tDays, " " , React.createElement('span', { style: { fontSize:14 }}, "日")
                 )
                 , React.createElement('button', { onClick: ()=>setTDays(d=>Math.min(20,d+1)), style: {
@@ -18288,22 +18288,16 @@ function App() {
               )
               , hd && (
                 React.createElement('div', { style: { marginTop:12, display:"grid", gridTemplateColumns:"1fr 1fr", gap:8 }}
-                  , React.createElement('div', { style: {
-                    background:"rgba(52,211,153,0.1)",
-                    border:`1px solid ${vsTgt>=0?"rgba(52,211,153,0.4)":"rgba(248,113,113,0.4)"}`,
-                    borderRadius:8, padding:"8px 10px" }}
+                  , React.createElement('div', { style: { padding:"8px 10px" }}
                     , React.createElement('div', { style: { fontSize:13, color:"#cbd5e1" }}, "基準時間との差")
-                    , React.createElement('div', { style: { fontSize:20, fontWeight:700, color:vsTgt>=0?"#34d399":"#f87171" }}
+                    , React.createElement('div', { style: { fontSize:22, fontWeight:700, color:"#60a5fa" }}
                       , vsTgt>=0?"+":"-", mmHHMM(Math.abs(vsTgt))
                     )
                     , React.createElement('div', { style: { fontSize:12, color:"#64748b" }}, "基準: " , mmHHMM(tRemMin))
                   )
-                  , React.createElement('div', { style: {
-                    background:"rgba(96,165,250,0.1)",
-                    border:`1px solid ${vsMax>=0?"rgba(96,165,250,0.4)":"rgba(248,113,113,0.4)"}`,
-                    borderRadius:8, padding:"8px 10px" }}
+                  , React.createElement('div', { style: { padding:"8px 10px" }}
                     , React.createElement('div', { style: { fontSize:13, color:"#cbd5e1" }}, "最大ここまで休める！")
-                    , React.createElement('div', { style: { fontSize:20, fontWeight:700, color:vsMax>=0?"#60a5fa":"#f87171" }}
+                    , React.createElement('div', { style: { fontSize:22, fontWeight:700, color:"#34d399" }}
                       , vsMax>=0?"+":"-", mmHHMM(Math.abs(vsMax))
                     )
                     , React.createElement('div', { style: { fontSize:12, color:"#64748b" }}, "日数判定: " , mmHHMM(tMaxMin))
