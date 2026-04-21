@@ -17292,6 +17292,13 @@ const SK = "nenkyuu_v2";
 const load = () => { try{ const r=localStorage.getItem(SK); return r?JSON.parse(r):null; }catch (e2){ return null; } };
 const save = d => { try{ localStorage.setItem(SK,JSON.stringify(d)); }catch (e3){} };
 
+// ─── バイブレーション（Android専用） ─────────────────────
+let _vibeOn = true;
+const vibe = (ms=12) => {
+  if (!_vibeOn) return;
+  try { if (navigator.vibrate) navigator.vibrate(ms); } catch(e) {}
+};
+
 // ─── スタイル定数 ──────────────────────────────────────────
 const IS = {
   background:"rgba(255,255,255,0.07)", border:"1px solid rgba(255,255,255,0.12)",
@@ -17431,7 +17438,7 @@ function NumpadModal({ title, mode="hm", initH=0, initM=0, initNum="", maxNum=99
           , keys.flat().map(k => {
             const isAct = k==="C"||k==="⌫";
             return (
-              React.createElement('button', { key: k, onClick: ()=>{ if(k==="C") pressClear(); else if(k==="⌫") pressDel(); else pressNum(k); },
+              React.createElement('button', { key: k, onClick: ()=>{ vibe(50); if(k==="C") pressClear(); else if(k==="⌫") pressDel(); else pressNum(k); },
                 style: {
                   ...nkBase,
                   height:52,
@@ -17448,12 +17455,12 @@ function NumpadModal({ title, mode="hm", initH=0, initM=0, initNum="", maxNum=99
 
         /* 確定 / キャンセル */
         , React.createElement('div', { style: { display:"grid", gridTemplateColumns:"1fr 1fr", gap:8, marginTop:12 }}
-          , React.createElement('button', { onClick: onClose, style: {
+          , React.createElement('button', { onClick: ()=>{ vibe(50); onClose(); }, style: {
             ...nkBase, height:44, fontSize:13,
             background:"rgba(255,255,255,0.07)", border:"1px solid rgba(255,255,255,0.12)",
             color:"#94a3b8",
           }}, "キャンセル")
-          , React.createElement('button', { onClick: confirm, style: {
+          , React.createElement('button', { onClick: ()=>{ if(!overMax) vibe(50); confirm(); }, style: {
             ...nkBase, height:44, fontSize:13, fontWeight:700,
             background: overMax ? "rgba(255,255,255,0.1)" : "linear-gradient(135deg,#6366f1,#8b5cf6)",
             border:"none", color: overMax ? "#475569" : "#fff",
@@ -17471,7 +17478,7 @@ function NumpadField({ label, value, placeholder, onTap, accent=false }) {
   return (
     React.createElement('div', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 240}}
       , label && React.createElement('div', { style: { fontSize:10, color:"#94a3b8", marginBottom:3 }}, label)
-      , React.createElement('div', { onClick: onTap, style: {
+      , React.createElement('div', { onClick: ()=>{ vibe(50); onTap(); }, style: {
         ...IS, cursor:"pointer", userSelect:"none",
         color: value ? (accent?"#a5b4fc":"#e2e8f0") : "#64748b",
         fontWeight: accent ? 700 : 400,
@@ -17576,11 +17583,11 @@ function DrumPickerModal({ initH=153, initM=0, onConfirm, onClose }) {
 
         /* ボタン */
         , React.createElement('div', { style: { display:"grid", gridTemplateColumns:"1fr 1fr", gap:8 }}
-          , React.createElement('button', { onClick: onClose, style: {
+          , React.createElement('button', { onClick: ()=>{ vibe(50); onClose(); }, style: {
             ...nkBase, height:44, fontSize:13,
             background:"rgba(255,255,255,0.07)", border:"1px solid rgba(255,255,255,0.12)", color:"#94a3b8",
           }}, "キャンセル")
-          , React.createElement('button', { onClick: confirm, style: {
+          , React.createElement('button', { onClick: ()=>{ vibe(50); confirm(); }, style: {
             ...nkBase, height:44, fontSize:13, fontWeight:700,
             background:"linear-gradient(135deg,#6366f1,#8b5cf6)", border:"none", color:"#fff",
           }}, "確定")
@@ -17681,6 +17688,7 @@ function DrumColumn({ items, value, onChange }) {
         , React.createElement('div', { className: "drum-hide-scroll", style: { paddingTop:padTop, paddingBottom:padBottom }}
           , items.map(item => (
             React.createElement('div', { key: item, onClick: ()=>{
+              vibe(50);
               const el = listRef.current;
               if(el) el.scrollTo({ top: items.indexOf(item)*ITEM_H, behavior:"smooth" });
               onChange(item);
@@ -17760,10 +17768,10 @@ function EditForm({ entry, workPerDay, holidays, onSave, onCancel }) {
         onTap: openWorkTime})
 
       , React.createElement('div', { style: { display:"grid", gridTemplateColumns:"1fr 1fr", gap:8 }}
-        , React.createElement('button', { onClick: ()=>onSave(draft), style: {
+        , React.createElement('button', { onClick: ()=>{ vibe(50); onSave(draft); }, style: {
           background:"linear-gradient(135deg,#6366f1,#8b5cf6)", border:"none",
           borderRadius:8, padding:"9px", color:"#fff", fontSize:13, fontWeight:600, cursor:"pointer" }}, "✓ 保存" )
-        , React.createElement('button', { onClick: onCancel, style: {
+        , React.createElement('button', { onClick: ()=>{ vibe(50); onCancel(); }, style: {
           background:"rgba(255,255,255,0.08)", border:"1px solid rgba(255,255,255,0.15)",
           borderRadius:8, padding:"9px", color:"#94a3b8", fontSize:13, cursor:"pointer" }}, "キャンセル")
       )
@@ -17806,6 +17814,10 @@ function App() {
     return true;
   });
   const [pendingWorkTime,   setPendingWorkTime]   = useState("");    // 確認待ちの労働時間
+  const [vibeOn, setVibeOn] = useState(true); // バイブ ON/OFF
+
+  // _vibeOn をグローバル変数と同期
+  useEffect(() => { _vibeOn = vibeOn; }, [vibeOn]);
 
   const hayamiScrollRef = useRef(null);
   const judgeRowRef     = useRef(null);
@@ -18037,7 +18049,7 @@ function App() {
 
   const TAB_ICONS = { main:"📋", records:"📅", hayami:"📊", help:"❓" };
   const tabBtn = (id,lbl) => (
-    React.createElement('button', { key: id, onClick: ()=>setTab(id), style: {
+    React.createElement('button', { key: id, onClick: ()=>{ vibe(50); setTab(id); }, style: {
       flex:1, border:"none",
       background: tab===id ? "rgba(99,102,241,0.2)" : "transparent",
       borderRadius: tab===id ? 10 : 0,
@@ -18084,12 +18096,23 @@ function App() {
             )
           )
           , React.createElement('div', { style: { display:"flex", alignItems:"center", gap:6 }}
-            , React.createElement('button', { onClick: exportData, title: "JSONでエクスポート", style: {
+            /* バイブスイッチ */
+            , React.createElement('button', { onClick: ()=>{ const next=!vibeOn; setVibeOn(next); _vibeOn=next; if(next) navigator.vibrate&&navigator.vibrate(20); }, style: {
+              background: vibeOn ? "rgba(99,102,241,0.25)" : "rgba(255,255,255,0.07)",
+              border: vibeOn ? "1px solid rgba(99,102,241,0.55)" : "1px solid rgba(255,255,255,0.15)",
+              borderRadius:8, padding:"6px 9px",
+              color: vibeOn ? "#a5b4fc" : "#475569",
+              fontSize:14, cursor:"pointer", lineHeight:1,
+              display:"flex", alignItems:"center", gap:4,
+            }}
+              , React.createElement('span', null, vibeOn ? "📳" : "📴")
+            )
+            , React.createElement('button', { onClick: ()=>{ vibe(50); exportData(); }, title: "JSONでエクスポート", style: {
               background:"rgba(52,211,153,0.15)", border:"1px solid rgba(52,211,153,0.4)",
               borderRadius:8, padding:"6px 10px",
               color:"#34d399", fontSize:12, fontWeight:600, cursor:"pointer",
             }}, "⬇ 出力" )
-            , React.createElement('label', { title: "JSONからインポート", style: {
+            , React.createElement('label', { onClick: ()=>vibe(50), title: "JSONからインポート", style: {
               background:"rgba(56,189,248,0.15)", border:"1px solid rgba(56,189,248,0.5)",
               borderRadius:8, padding:"6px 10px",
               color:"#38bdf8", fontSize:12, fontWeight:600, cursor:"pointer", whiteSpace:"nowrap",
@@ -18135,7 +18158,7 @@ function App() {
                         background:"rgba(56,189,248,0.18)",
                         border:"1px solid rgba(56,189,248,0.55)",
                       }}
-                      , React.createElement('span', { onClick: ()=>{ const c=parseHM(prevH); openPad({
+                      , React.createElement('span', { onClick: ()=>{ vibe(50); const c=parseHM(prevH); openPad({
                           title:"前年度 年休所得時間",mode:"hm",
                           initH:c!==null?Math.floor(c/60):0,
                           initM:c!==null?c%60:0,
@@ -18158,7 +18181,7 @@ function App() {
                         background:"rgba(16,185,129,0.15)",
                         border:"1px solid rgba(16,185,129,0.5)",
                       }}
-                      , React.createElement('span', { onClick: ()=>{ const c=parseHM(currH); openPad({
+                      , React.createElement('span', { onClick: ()=>{ vibe(50); const c=parseHM(currH); openPad({
                           title:"今年度 年休所得時間",mode:"hm",
                           initH:c!==null?Math.floor(c/60):153,
                           initM:c!==null?c%60:0,
@@ -18181,11 +18204,11 @@ function App() {
                     , React.createElement('span', null, "時間")
                     , React.createElement('span', { onClick: e=>{ e.stopPropagation(); setInfoPopup({title:"所定労働時間", desc:"1日の勤務時間を設定します。タップすると時間を入力できます。早見表の基準時間・判定時間はこの値から自動計算されます。"}); }, style:{ fontSize:12, cursor:"pointer", opacity:0.8 }}, "ℹ️")
                   )
-                  , React.createElement('div', { onClick: ()=>openPad({
+                  , React.createElement('div', { onClick: ()=>{ vibe(50); openPad({
                     title:"1日の所定労働時間",mode:"hm",
                     initH:Math.floor(wpd/60), initM:wpd%60,
                     onConfirm:(h,m)=>{ setWpd(h*60+m||1); closePad(); },
-                  }), style: {
+                  }); }, style: {
                     ...IS, cursor:"pointer", userSelect:"none",
                     color:"#fbbf24", fontWeight:700, fontSize:20,
                     background:"rgba(251,191,36,0.13)", border:"1px solid rgba(251,191,36,0.5)",
@@ -18285,13 +18308,13 @@ function App() {
             , React.createElement('div', { style: { background:"rgba(255,255,255,0.05)", border:"1px solid rgba(255,255,255,0.08)", borderRadius:12, padding:14 }}
               , React.createElement('div', { style: { fontSize:13, color:"#cbd5e1", marginBottom:10 }}, "目標残日数設定")
               , React.createElement('div', { style: { display:"flex", alignItems:"center", justifyContent:"center", gap:19 }}
-                , React.createElement('button', { onClick: ()=>setTDays(d=>Math.max(0,d-1)), style: {
+                , React.createElement('button', { onClick: ()=>{ vibe(50); setTDays(d=>Math.max(0,d-1)); }, style: {
                   width:38,height:38, background:"rgba(99,102,241,0.2)", border:"1px solid rgba(99,102,241,0.4)",
                   borderRadius:8, color:"#a5b4fc", fontSize:20, cursor:"pointer" }}, "−")
                 , React.createElement('div', { style: { textAlign:"center", fontSize:28, fontWeight:700, color:"#ddd6fe", background:"rgba(139,92,246,0.3)", border:"1px solid rgba(139,92,246,1.0)", borderRadius:8, padding:"4px 16px" }}
                   , tDays, " " , React.createElement('span', { style: { fontSize:14 }}, "日")
                 )
-                , React.createElement('button', { onClick: ()=>setTDays(d=>Math.min(20,d+1)), style: {
+                , React.createElement('button', { onClick: ()=>{ vibe(50); setTDays(d=>Math.min(20,d+1)); }, style: {
                   width:38,height:38, background:"rgba(99,102,241,0.2)", border:"1px solid rgba(99,102,241,0.4)",
                   borderRadius:8, color:"#a5b4fc", fontSize:20, cursor:"pointer" }}, "＋")
               )
@@ -18332,13 +18355,13 @@ function App() {
           React.createElement('div', { style: { display:"flex", flexDirection:"column", gap:10 }}
 
             , React.createElement('div', { style: { display:"grid", gridTemplateColumns:"1fr auto", gap:8 }}
-              , React.createElement('button', { onClick: ()=>{ setShowAdd(!showAdd); setShowSwitchConfirm(false); setPendingWorkTime(""); }, style: {
+              , React.createElement('button', { onClick: ()=>{ vibe(50); setShowAdd(!showAdd); setShowSwitchConfirm(false); setPendingWorkTime(""); }, style: {
                 background:"linear-gradient(135deg,#6366f1,#8b5cf6)", border:"none",
                 borderRadius:10, padding:"12px", color:"#fff", fontSize:14, fontWeight:600,
                 cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", gap:6,
               }}, showAdd?"✕ キャンセル":"＋ 年休使用日を追加")
               , entries.length>0 && (
-                React.createElement('button', { onClick: ()=>setClearOk(true), style: {
+                React.createElement('button', { onClick: ()=>{ vibe(50); setClearOk(true); }, style: {
                   background:"rgba(248,113,113,0.15)", border:"1px solid rgba(248,113,113,0.35)",
                   borderRadius:10, padding:"0 14px", color:"#f87171", fontSize:13, fontWeight:600,
                   cursor:"pointer", whiteSpace:"nowrap",
@@ -18352,10 +18375,10 @@ function App() {
                 , React.createElement('div', { style: { fontSize:13, color:"#fca5a5", fontWeight:600 }}, "⚠ 全件削除しますか？" )
                 , React.createElement('div', { style: { fontSize:12, color:"#94a3b8" }}, "この操作は元に戻せません。")
                 , React.createElement('div', { style: { display:"grid", gridTemplateColumns:"1fr 1fr", gap:8 }}
-                  , React.createElement('button', { onClick: ()=>{ setEntries(()=>[]); setClearOk(false); }, style: {
+                  , React.createElement('button', { onClick: ()=>{ vibe(50); setEntries(()=>[]); setClearOk(false); }, style: {
                     background:"linear-gradient(135deg,#ef4444,#dc2626)", border:"none",
                     borderRadius:8, padding:"9px", color:"#fff", fontSize:13, fontWeight:700, cursor:"pointer" }}, "削除する")
-                  , React.createElement('button', { onClick: ()=>setClearOk(false), style: {
+                  , React.createElement('button', { onClick: ()=>{ vibe(50); setClearOk(false); }, style: {
                     background:"rgba(255,255,255,0.08)", border:"1px solid rgba(255,255,255,0.15)",
                     borderRadius:8, padding:"9px", color:"#94a3b8", fontSize:13, cursor:"pointer" }}, "キャンセル")
                 )
@@ -18435,7 +18458,7 @@ function App() {
 
                 /* 労働時間クリアボタン */
                 , ne.workTime && (
-                  React.createElement('button', { onClick: ()=>setNe(p=>({...p,workTime:""})), style: {
+                  React.createElement('button', { onClick: ()=>{ vibe(50); setNe(p=>({...p,workTime:""})); }, style: {
                     background:"rgba(255,255,255,0.05)", border:"1px solid rgba(255,255,255,0.1)",
                     borderRadius:6, padding:"5px", color:"#64748b", fontSize:11, cursor:"pointer" }}, "労働時間をクリア"
 
@@ -18456,6 +18479,7 @@ function App() {
                     )
                     , React.createElement('div', { style: { display:"grid", gridTemplateColumns:"1fr 1fr", gap:8 }}
                       , React.createElement('button', { onClick: ()=>{
+                        vibe(50);
                         setNe(p=>({...p,workTime:pendingWorkTime}));
                         setShowSwitchConfirm(false); setPendingWorkTime("");
                       }, style: {
@@ -18463,6 +18487,7 @@ function App() {
                         borderRadius:8, padding:"10px", color:"#fff", fontSize:13, fontWeight:600, cursor:"pointer",
                       }}, "承諾")
                       , React.createElement('button', { onClick: ()=>{
+                        vibe(50);
                         setShowSwitchConfirm(false); setPendingWorkTime("");
                       }, style: {
                         background:"rgba(248,113,113,0.15)", border:"1px solid rgba(248,113,113,0.4)",
@@ -18497,7 +18522,7 @@ function App() {
 
                         )
                       )
-                      , React.createElement('button', { onClick: addEntry, disabled: noFields || willMinus || overWork || showSwitchConfirm, style: {
+                      , React.createElement('button', { onClick: ()=>{ if(!(noFields||willMinus||overWork||showSwitchConfirm)) vibe(50); addEntry(); }, disabled: noFields || willMinus || overWork || showSwitchConfirm, style: {
                         background: (noFields||willMinus||overWork||showSwitchConfirm) ? "rgba(255,255,255,0.1)" : "linear-gradient(135deg,#6366f1,#8b5cf6)",
                         border:"none", borderRadius:8, padding:"11px", color: (noFields||willMinus||overWork||showSwitchConfirm) ? "#475569" : "#fff",
                         fontSize:14, fontWeight:600, cursor:(noFields||willMinus||overWork||showSwitchConfirm)?"not-allowed":"pointer" }}, "追加する")
@@ -18545,15 +18570,15 @@ function App() {
                     )
                     , React.createElement('div', { style: { display:"flex", gap:6, marginLeft:8, flexShrink:0, flexDirection:"column", alignItems:"center" }}
                       , React.createElement('div', { style: { display:"flex", gap:6 }}
-                        , React.createElement('button', { onClick: ()=>setEditId(isEd?null:e.id), style: {
+                        , React.createElement('button', { onClick: ()=>{ vibe(50); setEditId(isEd?null:e.id); }, style: {
                           background:isEd?"rgba(99,102,241,0.3)":"rgba(99,102,241,0.1)",
                           border:`1px solid ${isEd?"rgba(99,102,241,0.6)":"rgba(99,102,241,0.25)"}`,
                           borderRadius:8, color:"#a5b4fc", width:32, height:32, cursor:"pointer", fontSize:14 }}, "✏")
-                        , React.createElement('button', { onClick: ()=>setEntries(p=>p.filter(x=>x.id!==e.id)), style: {
+                        , React.createElement('button', { onClick: ()=>{ vibe(50); setEntries(p=>p.filter(x=>x.id!==e.id)); }, style: {
                           background:"rgba(248,113,113,0.1)", border:"1px solid rgba(248,113,113,0.2)",
                           borderRadius:8, color:"#f87171", width:32, height:32, cursor:"pointer", fontSize:14 }}, "✕")
                       )
-                      , React.createElement('button', { onClick: ()=>setEntries(p=>p.map(x=>x.id===e.id?{...x,submitted:!x.submitted}:x)), style: {
+                      , React.createElement('button', { onClick: ()=>{ vibe(50); setEntries(p=>p.map(x=>x.id===e.id?{...x,submitted:!x.submitted}:x)); }, style: {
                         background: e.submitted?"rgba(52,211,153,0.15)":"rgba(248,113,113,0.12)",
                         border: `1px solid ${e.submitted?"rgba(52,211,153,0.4)":"rgba(248,113,113,0.35)"}`,
                         borderRadius:8, color: e.submitted?"#34d399":"#f87171",
@@ -18568,7 +18593,9 @@ function App() {
             })
 
             , entries.length===0 && (
-              React.createElement('div', { style: { textAlign:"center", padding:"40px 20px", color:"#475569", fontSize:14 }}, "使用記録がありません"
+              React.createElement('div', { style: { textAlign:"center", padding:"40px 20px", color:"#475569", fontSize:14 }}, "使用記録がありません。"
+                , React.createElement('br', null)
+                , "年休使用日の追加を押して入力して下さい。"
 
               )
             )
@@ -18844,7 +18871,7 @@ function App() {
         }}
           , React.createElement('div', { style: { fontSize:15, fontWeight:700, color:"#a5b4fc", marginBottom:12 }}, infoPopup.title)
           , React.createElement('div', { style: { fontSize:14, color:"#cbd5e1", lineHeight:1.7 }}, infoPopup.desc)
-          , React.createElement('button', { onClick: ()=>setInfoPopup(null), style: {
+          , React.createElement('button', { onClick: ()=>{ vibe(50); setInfoPopup(null); }, style: {
             marginTop:18, width:"100%", padding:"10px",
             background:"rgba(99,102,241,0.2)", border:"1px solid rgba(99,102,241,0.4)",
             borderRadius:8, color:"#a5b4fc", fontSize:14, fontWeight:600, cursor:"pointer",
@@ -18875,6 +18902,7 @@ function App() {
           }}, "年休所得時間の更新と使用記録の全削除を行ってください！")
           , React.createElement('div', { style: { display:"flex", justifyContent:"center" }}
             , React.createElement('button', { onClick: ()=>{
+              vibe(50);
               const key = 'renewalNoticed_' + new Date().getFullYear();
               localStorage.setItem(key, '1');
               setShowRenewalNotice(false);
@@ -18915,7 +18943,7 @@ function App() {
           }}, "年休所得時間と所定労働時間の入力ミス、使用記録の記入漏れがないか確認してください！")
           /* 閉じるボタン */
           , React.createElement('div', { style: { display:"flex", justifyContent:"center" }}
-            , React.createElement('button', { onClick: ()=>setShowNotice(false), style: {
+            , React.createElement('button', { onClick: ()=>{ vibe(50); setShowNotice(false); }, style: {
               padding:"8px 28px",
               background:"linear-gradient(135deg,#f59e0b,#d97706)",
               border:"none", borderRadius:12,
