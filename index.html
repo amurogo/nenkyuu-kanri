@@ -18122,7 +18122,7 @@ function App() {
                 , React.createElement('div', { style: { display:"grid", gridTemplateColumns:"1fr 1fr", gap:8 }}
                   /* 前年度 */
                   , React.createElement('div', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 887}}
-                    , React.createElement('div', { style: { fontSize:11, color:"#94a3b8", marginBottom:3, display:"flex", alignItems:"center", justifyContent:"space-between" }}
+                    , React.createElement('div', { style: { fontSize:11, color:"#94a3b8", marginBottom:3, display:"flex", alignItems:"center", justifyContent:"space-between", paddingRight:"14px" }}
                       , React.createElement('span', null, "前年度")
                       , React.createElement('span', { onClick: e=>{ e.stopPropagation(); setInfoPopup({title:"前年度 年休所得時間", desc:"前年度に付与・繰越された年休の時間を入力して下さい。前年度分は今年度分より先に消費されます。"}); }, style:{ fontSize:12, cursor:"pointer", opacity:0.8 }}, "ℹ️")
                     )
@@ -18145,7 +18145,7 @@ function App() {
                   )
                   /* 今年度 */
                   , React.createElement('div', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 900}}
-                    , React.createElement('div', { style: { fontSize:11, color:"#94a3b8", marginBottom:3, display:"flex", alignItems:"center", justifyContent:"space-between" }}
+                    , React.createElement('div', { style: { fontSize:11, color:"#94a3b8", marginBottom:3, display:"flex", alignItems:"center", justifyContent:"space-between", paddingRight:"14px" }}
                       , React.createElement('span', null, "今年度")
                       , React.createElement('span', { onClick: e=>{ e.stopPropagation(); setInfoPopup({title:"今年度 年休所得時間", desc:"今年度に新たに付与された年休の時間を入力して下さい。前年度分を使い切った後にこちらが消費されます。"}); }, style:{ fontSize:12, cursor:"pointer", opacity:0.8 }}, "ℹ️")
                     )
@@ -18171,13 +18171,13 @@ function App() {
 
               /* 1日の所定労働時間 */
               , React.createElement('div', { style: {
-                background:"rgba(255,255,255,0.05)", border:"1px solid rgba(251,191,36,0.3)",
+                background:"rgba(255,255,255,0.05)", border:"1px solid rgba(255,255,255,0.08)",
                 borderRadius:12, padding:12, width:120,
                 display:"flex", flexDirection:"column", alignSelf:"stretch",
               }}
                 , React.createElement('div', { style: { fontSize:13, color:"#cbd5e1", marginBottom:8, whiteSpace:"nowrap" }}, "所定労働時間")
                 , React.createElement('div', { style: { flex:1, display:"flex", flexDirection:"column", justifyContent:"flex-end" }}
-                  , React.createElement('div', { style: { fontSize:11, color:"#94a3b8", marginBottom:3, display:"flex", alignItems:"center", justifyContent:"space-between" }}
+                  , React.createElement('div', { style: { fontSize:11, color:"#94a3b8", marginBottom:3, display:"flex", alignItems:"center", justifyContent:"space-between", paddingRight:"14px" }}
                     , React.createElement('span', null, "時間")
                     , React.createElement('span', { onClick: e=>{ e.stopPropagation(); setInfoPopup({title:"所定労働時間", desc:"1日の勤務時間を設定します。タップすると時間を入力できます。早見表の基準時間・判定時間はこの値から自動計算されます。"}); }, style:{ fontSize:12, cursor:"pointer", opacity:0.8 }}, "ℹ️")
                   )
@@ -18297,14 +18297,14 @@ function App() {
               )
               , hd && (
                 React.createElement('div', { style: { marginTop:12, display:"grid", gridTemplateColumns:"1fr 1fr", gap:8 }}
-                  , React.createElement('div', { style: { background:"rgba(255,255,255,0.05)", border:"1px solid rgba(255,255,255,0.08)", borderRadius:12, padding:"8px 10px" }}
+                  , React.createElement('div', { style: { background:"rgba(255,255,255,0.05)", border:`1px solid ${vsTgt>=0?"rgba(255,255,255,0.08)":"rgba(248,113,113,0.6)"}`, borderRadius:12, padding:"8px 10px" }}
                     , React.createElement('div', { style: { fontSize:13, color:"#cbd5e1" }}, "基準時間との差")
                     , React.createElement('div', { style: { fontSize:22, fontWeight:700, color:"#60a5fa" }}
                       , vsTgt>=0?"+":"-", mmHHMM(Math.abs(vsTgt))
                     )
                     , React.createElement('div', { style: { fontSize:12, color:"#64748b" }}, "基準: " , mmHHMM(tRemMin))
                   )
-                  , React.createElement('div', { style: { background:"rgba(255,255,255,0.05)", border:"1px solid rgba(255,255,255,0.08)", borderRadius:12, padding:"8px 10px" }}
+                  , React.createElement('div', { style: { background:"rgba(255,255,255,0.05)", border:`1px solid ${vsMax>=0?"rgba(255,255,255,0.08)":"rgba(248,113,113,0.6)"}`, borderRadius:12, padding:"8px 10px" }}
                     , React.createElement('div', { style: { fontSize:13, color:"#cbd5e1" }}, "最大ここまで休める！")
                     , React.createElement('div', { style: { fontSize:22, fontWeight:700, color:"#34d399" }}
                       , vsMax>=0?"+":"-", mmHHMM(Math.abs(vsMax))
@@ -18716,55 +18716,51 @@ function App() {
               {
                 icon:"📋", title:"アプリの概要",
                 color:"#6366f1",
-                body:`このアプリは年次有給休暇（年休）の残時間を管理し、消化ペースが目標に対して適切かどうかを自動で判定するツールです。\nローカルストレージに自動保存されるため、次回開いたときも入力内容が維持されます。\nタブは画面下部のボタンをタップするか、画面を左右にスワイプして切り替えられます。`,
+                body:`このアプリは年次有給休暇（年休）の残時間を管理し、消化ペースが目標に対して適切かどうかを自動で判定するツールです。\n入力内容はブラウザのローカルストレージに自動保存されるため、次回開いたときも維持されます。\nタブは画面下部のボタンをタップするか、画面を左右にスワイプして切り替えられます。現在のタブは紫色の背景で強調表示されます。`,
               },
               {
                 icon:"⚙️", title:"最初に設定すること（サマリータブ）",
                 color:"#8b5cf6",
                 items:[
-                  {label:"年休所得時間（前年度）", desc:"前年度から持ち越した年休の時間を入力します。入力枠は紫色で表示されます。年休はまずこの前年度分から優先的に消費されます。"},
-                  {label:"年休所得時間（今年度）", desc:"今年度に新たに付与された年休の時間を入力します。入力枠は緑色で表示されます。前年度分を使い切った後にこの今年度分が消費されます。"},
-                  {label:"所定労働時間", desc:"1日の勤務時間を設定します。入力枠はオレンジ色で表示されます。タップするとテンキーが開きます。早見表の基準時間・判定時間はこの値から自動計算されます。"},
-                  {label:"目標残日数設定", desc:"年休更新までに残しておきたい年休の日数目標を設定します。早見表の「目標」行もこの値に連動します。"},
-                ],
-              },
-              {
-                icon:"🔄", title:"前年度・今年度の自動移行",
-                color:"#a5b4fc",
-                body:`年休は前年度分から優先的に消費されます。使用記録を入力した結果、前年度分の残時間がなくなると、自動的に今年度分の消費に切り替わります。`,
-                items:[
-                  {label:"サマリーの年休残時間", desc:"時間の下に「前年度」または「今年度」のバッジが表示されます。前年度消費中は紫、今年度消費中は緑で表示されます。"},
-                  {label:"使用記録入力時の移行確認", desc:"労働時間を入力した結果、前年度分が不足になる場合はダイアログが表示されます。「承諾」で今年度分への移行を確定します。「拒否」を押すと入力した時間がクリアされ、再入力できます。"},
-                  {label:"早見表のインジケーター", desc:"早見表タブの上部に「前年度消費中」または「今年度消費中」と現在の年休残時間が表示されます。前年度超過時は超過量も合わせて表示されます。"},
-                ],
-              },
-              {
-                icon:"📅", title:"使用記録の入力（使用記録タブ）",
-                color:"#06b6d4",
-                items:[
-                  {label:"＋ 追加ボタン", desc:"年休を使用した日付・ダイヤ区分・番号・労働時間をすべて入力しないと追加できません。使用日・番号・労働時間の各欄は未入力のとき「タップして入力」と表示されます。"},
-                  {label:"使用日の入力", desc:"使用日欄をタップするとカレンダーが開きます。日付を選ぶと曜日が自動で表示されます。"},
-                  {label:"労働時間の上限", desc:"労働時間は15時間00分が上限です。超えた場合はテンキーに警告が表示され、確定できません。"},
-                  {label:"前年度分が不足する場合", desc:"入力した労働時間によって前年度分の残時間がマイナスになる場合、確認ダイアログが表示されます。「承諾」で今年度へ移行、「拒否」で入力時間をクリアします。"},
-                  {label:"年休残時間がマイナスになる場合", desc:"前年度・今年度を合わせた合計残時間もマイナスになる場合は警告が表示され、追加できません。年休所得時間を見直してください。"},
-                  {label:"✏ 編集ボタン", desc:"登録済みの記録を修正できます。"},
-                  {label:"✕ 削除ボタン", desc:"不要な記録を削除します。"},
-                  {label:"届出済 / 未提出", desc:"年休届の提出状況を管理できます。タップするたびに「未提出」（赤）↔「届出済」（緑）が切り替わります。"},
+                  {label:"年休所得時間（前年度）", desc:"前年度から持ち越した年休の時間を入力します。水色の枠をタップするとテンキーが開きます。「前年度」の文字横の ℹ️ をタップすると説明が表示されます。年休はまずこの前年度分から優先的に消費されます。"},
+                  {label:"年休所得時間（今年度）", desc:"今年度に新たに付与された年休の時間を入力します。緑色の枠をタップするとテンキーが開きます。「今年度」の文字横の ℹ️ をタップすると説明が表示されます。前年度分を使い切った後にこちらが消費されます。"},
+                  {label:"所定労働時間", desc:"1日の勤務時間を設定します。オレンジ色の枠をタップするとテンキーが開きます。「時間」の文字横の ℹ️ をタップすると説明が表示されます。早見表の基準時間・判定時間はこの値から自動計算されます。"},
+                  {label:"目標残日数設定", desc:"年休更新までに残しておきたい日数目標を − ・ ＋ ボタンで設定します。早見表の目標行にも反映されます。"},
                 ],
               },
               {
                 icon:"📊", title:"サマリーの見方",
                 color:"#10b981",
                 items:[
-                  {label:"消費時間", desc:"これまでの使用記録の合計消費時間です。"},
-                  {label:"年休残時間", desc:"現在消費中の年度（前年度または今年度）の残り時間です。時間の下に「前年度」（紫）または「今年度」（緑）のバッジで現在どちらの年度を消費中か確認できます。"},
+                  {label:"消費時間", desc:"使用記録の合計消費時間です。"},
+                  {label:"年休残時間", desc:"現在消費中の年度の残り時間です。「前年度」（紫）または「今年度」（緑）のバッジでどちらを消費中か確認できます。"},
                   {label:"残日数", desc:"年休残時間をもとに、現在何日分相当の年休が残っているかを示します。"},
                   {label:"日数判定", desc:"残時間をもとに算出した現在の残日数判定値です。"},
                   {label:"目標圏内 / 目標超過", desc:"判定日数が目標日数以上なら「目標圏内」（青）、下回る場合は「目標超過」（赤・点滅）で表示されます。"},
-                  {label:"基準時間との差", desc:"現在の残時間と目標日数に対応する基準時間との差です。"},
-                  {label:"前年度分／今年度分使い切りまでの時間", desc:"日数判定が0日のときに表示されます。前年度消費中は「前年度分使い切りまでの時間」、今年度消費中は「今年度分使い切りまでの時間」と表示され、値は年休残時間と同じです。0日以外のときは「○○日に切り替わるまでの時間」と表示されます。"},
-                  {label:"最大ここまで休める！", desc:"現在の残時間で最大何時間分まで年休を取得できるかの目安です。"},
-                  {label:"目標残日数設定", desc:"年休更新までに残しておきたい日数目標をここで変更できます。早見表の目標行にも反映されます。"},
+                  {label:"基準時間との差", desc:"現在の残時間と目標日数に対応する基準時間との差です。マイナスになると枠が赤色に変わります。"},
+                  {label:"最大ここまで休める！", desc:"現在の残時間で最大何時間分まで年休を取得できるかの目安です。マイナスになると枠が赤色に変わります。"},
+                ],
+              },
+              {
+                icon:"🔄", title:"前年度・今年度の自動移行",
+                color:"#a5b4fc",
+                body:`年休は前年度分から優先的に消費されます。前年度分の残時間がなくなると自動的に今年度分の消費に切り替わります。`,
+                items:[
+                  {label:"使用記録入力時の移行確認", desc:"入力した労働時間によって前年度分が不足になる場合、確認ダイアログが表示されます。「承諾」で今年度分への移行を確定します。「拒否」を押すと入力時間がクリアされ、再入力できます。"},
+                  {label:"早見表のインジケーター", desc:"早見表タブの上部に「前年度消費中」または「今年度消費中」と現在の年休残時間が表示されます。"},
+                ],
+              },
+              {
+                icon:"📅", title:"使用記録の入力（使用記録タブ）",
+                color:"#06b6d4",
+                items:[
+                  {label:"＋ 追加ボタン", desc:"年休を使用した日付・ダイヤ区分・番号・労働時間をすべて入力しないと追加できません。"},
+                  {label:"使用日の入力", desc:"使用日欄をタップするとカレンダーが開きます。日付を選ぶと曜日が自動で表示されます。"},
+                  {label:"労働時間の上限", desc:"労働時間は15時間00分が上限です。超えた場合はテンキーに警告が表示され、確定できません。"},
+                  {label:"年休残時間がマイナスになる場合", desc:"前年度・今年度を合わせた残時間がマイナスになる場合は警告が表示され、追加できません。年休所得時間を見直してください。"},
+                  {label:"✏ 編集ボタン", desc:"登録済みの記録を修正できます。"},
+                  {label:"✕ 削除ボタン", desc:"不要な記録を削除します。"},
+                  {label:"届出済 / 未提出", desc:"年休届の提出状況を管理できます。タップするたびに「未提出」（赤）↔「届出済」（緑）が切り替わります。"},
                 ],
               },
               {
@@ -18772,7 +18768,7 @@ function App() {
                 color:"#f59e0b",
                 body:`残時間が各日数の「日数判定時間」の範囲内に収まっていれば、その日数と判定されます。\n早見表を開くと現在の判定行が自動的に中央にスクロールします。`,
                 items:[
-                  {label:"上部インジケーター", desc:"「前年度消費中」または「今年度消費中」と現在の年休残時間を表示します。前年度を超過している場合は超過量も表示されます。"},
+                  {label:"上部インジケーター", desc:"「前年度消費中」または「今年度消費中」と現在の年休残時間を表示します。"},
                   {label:"🎯 目標（緑枠）", desc:"設定した目標残日数の行です。"},
                   {label:"📍 判定（青/ピンク枠）", desc:"現在の残時間から算出された日数判定の行です。目標以上なら青、目標を下回るならピンクで表示されます。"},
                   {label:"⭐ 目標=判定（黄枠）", desc:"目標日数と判定日数が一致している状態です。"},
@@ -18783,12 +18779,13 @@ function App() {
                 color:"#64748b",
                 body:`入力内容はブラウザのローカルストレージに自動保存されます。次回開いたときも内容が維持されます。`,
                 items:[
-                  {label:"⬇ 出力ボタン", desc:"現在のデータをJSONファイルとしてダウンロードします。バックアップや端末間の移行に使用してください。"},
-                  {label:"⬆ 読込ボタン", desc:"出力したJSONファイルを読み込んでデータを復元します。読み込み後はローカルストレージにも自動保存されます。"},
+                  {label:"⬇ 出力ボタン（緑色）", desc:"現在のデータをJSONファイルとしてダウンロードします。タップすると確認ダイアログが表示されます。バックアップや端末間の移行に使用してください。"},
+                  {label:"⬆ 読込ボタン（青色）", desc:"出力したJSONファイルを読み込んでデータを復元します。タップすると確認ダイアログが表示されます。現在のデータが上書きされますのでご注意ください。"},
+                  {label:"端末・ブラウザをまたいだ共有", desc:"ローカルストレージは端末・ブラウザごとに独立しています。別の端末で同じデータを使うには「⬇ 出力」→「⬆ 読込」の手順で移行してください。"},
                 ],
               },
               {
-                icon:"🔄", title:"年休更新通知",
+                icon:"🔔", title:"年休更新通知",
                 color:"#a5b4fc",
                 items:[
                   {label:"表示タイミング", desc:"毎年9月16日以降にアプリを初めて起動すると、年休更新を知らせるメッセージが表示されます。"},
@@ -18800,8 +18797,8 @@ function App() {
                 icon:"⚠️", title:"注意事項",
                 color:"#f87171",
                 items:[
-                  {label:"データの保存場所", desc:"データはお使いのブラウザのローカルストレージに保存されます。ブラウザのキャッシュや閲覧データを削除すると消える場合があります。「⬇ 出力」で定期的にバックアップすることをおすすめします。"},
-                  {label:"端末・ブラウザをまたいだ共有", desc:"ローカルストレージは端末・ブラウザごとに独立しているため、別の端末から同じデータを参照するには「⬇ 出力」→「⬆ 読込」の手順で移行してください。"},
+                  {label:"データの保存場所", desc:"データはブラウザのローカルストレージに保存されます。ブラウザのキャッシュや閲覧データを削除すると消える場合があります。「⬇ 出力」で定期的にバックアップすることをおすすめします。"},
+                  {label:"計算の誤差について", desc:"このアプリは年休消費に関する各時間の計算をシミュレーションしています。実際の時間と誤差が生じる場合がありますので、正規の時間を確認のうえ参考としてご利用ください。"},
                 ],
               },
             ].map((sec,si)=>(
