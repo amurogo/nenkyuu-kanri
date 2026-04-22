@@ -37,7 +37,27 @@
   })();
   </script>
   <style>
-    @keyframes ob-pulse {
+    @keyframes tab-bounce {
+      0%   { transform: translateY(0) scale(1); }
+      40%  { transform: translateY(-6px) scale(1.15); }
+      70%  { transform: translateY(-2px) scale(1.05); }
+      100% { transform: translateY(0) scale(1); }
+    }
+    @keyframes tab-fadein {
+      0%   { opacity: 0; }
+      100% { opacity: 1; }
+    }
+    @keyframes tab-color-fadein {
+      0%   { color: #475569; }
+      100% { color: #a5b4fc; }
+    }
+    @keyframes tab-border-fadein {
+      0%   { border-top-color: transparent; }
+      100% { border-top-color: #6366f1; }
+    }
+    .tab-active-icon  { animation: tab-bounce 1.0s ease-out; }
+    .tab-active-bg    { animation: tab-fadein 1.5s ease-in-out; }
+    .tab-active-label { animation: tab-color-fadein 1.5s ease-in-out, tab-border-fadein 1.5s ease-in-out; }
       0%,100% { box-shadow: 0 0 0 0 rgba(99,102,241,0.0); border-color: rgba(99,102,241,0.4); }
       50%      { box-shadow: 0 0 0 6px rgba(99,102,241,0.35); border-color: rgba(99,102,241,1.0); }
     }
@@ -17827,6 +17847,7 @@ function App() {
   });
   const [pendingWorkTime,   setPendingWorkTime]   = useState("");    // 確認待ちの労働時間
   const [vibeOn, setVibeOn] = useState(true); // バイブ ON/OFF
+  const [animatingTab, setAnimatingTab] = useState(tab); // アニメーション用タブ状態
 
   // _vibeOn をグローバル変数と同期
   useEffect(() => { _vibeOn = vibeOn; }, [vibeOn]);
@@ -17864,8 +17885,9 @@ function App() {
     }
     setTab(prev => {
       const idx = TABS.indexOf(prev);
-      if(dx < 0) return TABS[Math.min(idx+1, TABS.length-1)]; // 左スワイプ → 次
-      return TABS[Math.max(idx-1, 0)]; // 右スワイプ → 前
+      const next = dx < 0 ? TABS[Math.min(idx+1, TABS.length-1)] : TABS[Math.max(idx-1, 0)];
+      setTimeout(()=>setAnimatingTab(next), 30);
+      return next;
     });
   }, []);
 
@@ -18067,20 +18089,34 @@ function App() {
 
   const TAB_ICONS = { main:"📋", records:"📅", hayami:"📊", help:"❓" };
   const tabBtn = (id,lbl) => (
-    React.createElement('button', { key: id, onClick: ()=>{ if(!allPulseOff && id !== 'help' && !(tab === 'help' && id === 'main')){ showBlockToast(); return; } vibe(50); setTab(id); }, style: {
+    React.createElement('button', { key: id, onClick: ()=>{
+      if(!allPulseOff && id !== 'help' && !(tab === 'help' && id === 'main')){ showBlockToast(); return; }
+      setTab(id);
+      setTimeout(()=>setAnimatingTab(id), 30);
+    }, style: {
       flex:1, border:"none",
-      background: tab===id ? "rgba(99,102,241,0.2)" : "transparent",
-      borderRadius: tab===id ? 10 : 0,
+      background: "transparent",
+      borderRadius: 10,
       display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center",
       gap:3, padding:"8px 4px 6px", cursor:"pointer",
-      color:tab===id?"#a5b4fc":"#475569",
-      transition:"all 0.2s",
+      color: "#475569",
+      position:"relative", overflow:"hidden",
     }}
-      , React.createElement('span', { style: { fontSize:20, lineHeight:1 }}, TAB_ICONS[id])
-      , React.createElement('span', { style: {
-        fontSize:12, fontWeight:tab===id?700:400,
-        borderTop: tab===id?"2px solid #6366f1":"2px solid transparent",
-        paddingTop:3, width:"100%", textAlign:"center",
+      , animatingTab===id && React.createElement('div', { key:'bg-'+id, className:'tab-active-bg', style: {
+        position:"absolute", inset:0, borderRadius:10,
+        background:"rgba(99,102,241,0.2)", pointerEvents:"none",
+      }})
+      , React.createElement('span', { key: 'icon-'+id+(animatingTab===id?'-on':'-off'), style: {
+        fontSize:20, lineHeight:1, display:'block', position:"relative",
+        color: animatingTab===id ? "#a5b4fc" : "#475569",
+        animation: animatingTab===id ? 'tab-bounce 1.0s ease-out, tab-color-fadein 1.5s ease-in-out' : 'none',
+      }}, TAB_ICONS[id])
+      , React.createElement('span', { key: 'lbl-'+id+(animatingTab===id?'-on':'-off'), style: {
+        fontSize:12, fontWeight: animatingTab===id ? 700 : 400,
+        borderTop: animatingTab===id ? "2px solid #6366f1" : "2px solid transparent",
+        paddingTop:3, width:"100%", textAlign:"center", position:"relative",
+        color: animatingTab===id ? "#a5b4fc" : "#475569",
+        animation: animatingTab===id ? 'tab-color-fadein 1.5s ease-in-out, tab-border-fadein 1.5s ease-in-out' : 'none',
       }}, lbl)
     )
   );
@@ -18686,7 +18722,9 @@ function App() {
                   if(!allPulseOff) return;
                   setTab(prev=>{
                     const idx=TABS.indexOf(prev);
-                    return dx<0?TABS[Math.min(idx+1,TABS.length-1)]:TABS[Math.max(idx-1,0)];
+                    const next=dx<0?TABS[Math.min(idx+1,TABS.length-1)]:TABS[Math.max(idx-1,0)];
+                    setTimeout(()=>setAnimatingTab(next), 30);
+                    return next;
                   });
                 }
               }}
@@ -18754,7 +18792,7 @@ function App() {
         , tab==="help" && (
           React.createElement('div', { style: { overflowY:"auto", height:"calc(100vh - 195px)", display:"flex", flexDirection:"column", gap:14, paddingBottom:24 },
             onTouchStart: e=>{ e.stopPropagation(); const t=e.touches[0]; e.currentTarget._sx=t.clientX; e.currentTarget._sy=t.clientY; },
-            onTouchEnd: e=>{ e.stopPropagation(); const sx=e.currentTarget._sx,sy=e.currentTarget._sy; if(sx==null)return; const dx=e.changedTouches[0].clientX-sx,dy=e.changedTouches[0].clientY-sy; e.currentTarget._sx=null; if(Math.abs(dx)>=50&&Math.abs(dx)>Math.abs(dy)){ if(!allPulseOff) return; setTab(prev=>{ const idx=TABS.indexOf(prev); return dx<0?TABS[Math.min(idx+1,TABS.length-1)]:TABS[Math.max(idx-1,0)]; }); } }}
+            onTouchEnd: e=>{ e.stopPropagation(); const sx=e.currentTarget._sx,sy=e.currentTarget._sy; if(sx==null)return; const dx=e.changedTouches[0].clientX-sx,dy=e.changedTouches[0].clientY-sy; e.currentTarget._sx=null; if(Math.abs(dx)>=50&&Math.abs(dx)>Math.abs(dy)){ if(!allPulseOff) return; setTab(prev=>{ const idx=TABS.indexOf(prev); const next=dx<0?TABS[Math.min(idx+1,TABS.length-1)]:TABS[Math.max(idx-1,0)]; setTimeout(()=>setAnimatingTab(next),30); return next; }); } }}
 
 
             /* セクションヘルパー */
