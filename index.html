@@ -17812,6 +17812,7 @@ function App() {
   const [showAdd,  setShowAdd]  = useState(false);
   const [editId,   setEditId]   = useState(null);
   const [clearOk,  setClearOk]  = useState(false);
+  const [deleteConfirmId, setDeleteConfirmId] = useState(null);
   const [flash,    setFlash]    = useState(false);
   const [pad,      setPad]      = useState(null);
   const [infoPopup, setInfoPopup] = useState(null); // {title, desc}
@@ -18412,7 +18413,6 @@ function App() {
               React.createElement('div', { style: { background:"rgba(248,113,113,0.08)", border:"1px solid rgba(248,113,113,0.4)",
                 borderRadius:12, padding:14, display:"flex", flexDirection:"column", gap:10 }}
                 , React.createElement('div', { style: { fontSize:13, color:"#fca5a5", fontWeight:600 }}, "⚠ 全件削除しますか？" )
-                , React.createElement('div', { style: { fontSize:12, color:"#94a3b8" }}, "この操作は元に戻せません。")
                 , React.createElement('div', { style: { display:"grid", gridTemplateColumns:"1fr 1fr", gap:8 }}
                   , React.createElement('button', { onClick: ()=>{ vibe(50); setEntries(()=>[]); setClearOk(false); }, style: {
                     background:"linear-gradient(135deg,#ef4444,#dc2626)", border:"none",
@@ -18613,7 +18613,7 @@ function App() {
                           background:isEd?"rgba(99,102,241,0.3)":"rgba(99,102,241,0.1)",
                           border:`1px solid ${isEd?"rgba(99,102,241,0.6)":"rgba(99,102,241,0.25)"}`,
                           borderRadius:8, color:"#a5b4fc", width:32, height:32, cursor:"pointer", fontSize:14 }}, "✏")
-                        , React.createElement('button', { onClick: ()=>{ vibe(50); setEntries(p=>p.filter(x=>x.id!==e.id)); }, style: {
+                        , React.createElement('button', { onClick: ()=>{ vibe(50); setDeleteConfirmId(e.id); }, style: {
                           background:"rgba(248,113,113,0.1)", border:"1px solid rgba(248,113,113,0.2)",
                           borderRadius:8, color:"#f87171", width:32, height:32, cursor:"pointer", fontSize:14 }}, "✕")
                       )
@@ -18823,7 +18823,8 @@ function App() {
                   {label:"労働時間", desc:"その日に実際に働いた時間を入力します。上限は15時間00分です。"},
                   {label:"前年度→今年度の移行確認", desc:"入力した時間によって前年度分が不足する場合、確認ダイアログが表示されます。「承諾」で今年度分への移行を確定、「拒否」で入力をやり直せます。"},
                   {label:"届出済 / 未提出", desc:"年休届の提出状況を管理できます。タップするたびに切り替わります。"},
-                  {label:"✏ 編集 / ✕ 削除", desc:"登録済みの記録を修正・削除できます。"},
+                  {label:"✏ 編集 / ✕ 削除", desc:"登録済みの記録を修正・削除できます。✕ をタップすると確認ダイアログが表示されます。「削除する」で削除、「キャンセル」で取り消せます。"},
+                  {label:"🗑 全削除", desc:"すべての使用記録を一括削除します。タップすると「⚠ 全件削除しますか？」の確認が表示されます。「削除する」で全件削除、「キャンセル」で取り消せます。"},
                 ],
               },
               {
@@ -18887,6 +18888,33 @@ function App() {
               )
             ))
 
+          )
+        )
+      )
+      /* ─── 削除確認モーダル ─── */
+      , deleteConfirmId && React.createElement('div', { style: {
+        position:"fixed", inset:0, zIndex:500,
+        background:"rgba(0,0,0,0.65)",
+        display:"flex", alignItems:"center", justifyContent:"center",
+        padding:"24px",
+      }}
+        , React.createElement('div', { style: {
+          background:"#1e293b", border:"1px solid rgba(99,102,241,0.4)",
+          borderRadius:16, padding:"24px", maxWidth:300, width:"100%",
+          boxShadow:"0 8px 40px rgba(0,0,0,0.6)",
+        }}
+          , React.createElement('div', { style: { fontSize:15, fontWeight:700, color:"#ffffff", marginBottom:12, textAlign:"center" }}, "削除してもいいですか？")
+          , React.createElement('div', { style: { display:"flex", gap:10, marginTop:8 }}
+            , React.createElement('button', { onClick: ()=>{ vibe(50); setEntries(p=>p.filter(x=>x.id!==deleteConfirmId)); setDeleteConfirmId(null); }, style: {
+              flex:1, padding:"10px",
+              background:"linear-gradient(135deg,#ef4444,#dc2626)", border:"none",
+              borderRadius:10, color:"#fff", fontSize:14, fontWeight:700, cursor:"pointer",
+            }}, "削除する")
+            , React.createElement('button', { onClick: ()=>{ vibe(30); setDeleteConfirmId(null); }, style: {
+              flex:1, padding:"10px",
+              background:"rgba(99,102,241,0.15)", border:"1px solid rgba(99,102,241,0.4)",
+              borderRadius:10, color:"#a5b4fc", fontSize:14, fontWeight:600, cursor:"pointer",
+            }}, "キャンセル")
           )
         )
       )
