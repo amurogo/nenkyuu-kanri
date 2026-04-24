@@ -17826,9 +17826,9 @@ function App() {
   const isFirstVisit = !localStorage.getItem('onboarding_done');
   const [showOnboarding, setShowOnboarding] = useState(isFirstVisit);
   // 点滅対象フィールドの解除フラグ（初回のみ点滅・2回目以降は最初からoff）
-  const [pulseOff, setPulseOff] = useState(!isFirstVisit ? { prevH:true, currH:true, wpd:true, tDays:true } : { prevH:false, currH:false, wpd:false, tDays:false });
-  // 全部タップ済みかどうか（オンボーディング非表示 かつ 全フィールドタップ済み）
-  const allPulseOff = (!isFirstVisit) || (pulseOff.prevH && pulseOff.currH && pulseOff.wpd && pulseOff.tDays);
+  const [pulseOff, setPulseOff] = useState({ prevH:!isFirstVisit, currH:!isFirstVisit, wpd:!isFirstVisit, tDays:!isFirstVisit });
+  // 全部タップ済みかどうか（初回以外は最初からtrue）
+  const allPulseOff = pulseOff.prevH && pulseOff.currH && pulseOff.wpd && pulseOff.tDays;
   // ブロック時のトースト
   const [showPulseToast, setShowPulseToast] = useState(false);
   const showBlockToast = () => { setShowPulseToast(true); setTimeout(()=>setShowPulseToast(false), 2000); };
@@ -18996,7 +18996,6 @@ function App() {
               vibe(50);
               localStorage.setItem('onboarding_done','1');
               setShowOnboarding(false);
-              setTab('main');
             }, style: {
               padding:"10px 36px",
               background:"linear-gradient(135deg,#6366f1,#8b5cf6)",
