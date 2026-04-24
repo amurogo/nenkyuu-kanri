@@ -17825,8 +17825,23 @@ function App() {
   // ─── オンボーディング ───────────────────────────────────
   const isFirstVisit = !localStorage.getItem('onboarding_done');
   const [showOnboarding, setShowOnboarding] = useState(isFirstVisit);
-  // 点滅対象フィールドの解除フラグ（初回のみ点滅・2回目以降は最初からoff）
-  const [pulseOff, setPulseOff] = useState({ prevH:!isFirstVisit, currH:!isFirstVisit, wpd:!isFirstVisit, tDays:!isFirstVisit });
+  // 点滅対象フィールドの解除フラグ（localStorageで永続化）
+  const loadPulseOff = () => {
+    if(isFirstVisit) return null; // 初回は保存値を無視して必ずfalseで初期化
+    try { const s = localStorage.getItem('pulseOff'); return s ? JSON.parse(s) : null; } catch(e){ return null; }
+  };
+  const initPulse = loadPulseOff() || { prevH:!isFirstVisit, currH:!isFirstVisit, wpd:!isFirstVisit, tDays:!isFirstVisit };
+  const [pulseOff, setPulseOffRaw] = useState(initPulse);
+  const setPulseOff = (fn) => {
+    setPulseOffRaw(prev => {
+      const next = typeof fn === 'function' ? fn(prev) : fn;
+      localStorage.setItem('pulseOff', JSON.stringify(next));
+      if(next.prevH && next.currH && next.wpd && next.tDays){
+        localStorage.setItem('onboarding_done','1');
+      }
+      return next;
+    });
+  };
   // 全部タップ済みかどうか（初回以外は最初からtrue）
   const allPulseOff = pulseOff.prevH && pulseOff.currH && pulseOff.wpd && pulseOff.tDays;
   // ブロック時のトースト
@@ -18188,7 +18203,12 @@ function App() {
                       , React.createElement('span', null, "前年度")
                       , React.createElement('span', { onClick: e=>{ e.stopPropagation(); setInfoPopup({title:"前年度 年休所得時間", desc:"前年度に付与・繰越された年休の時間を入力して下さい。前年度分は今年度分より先に消費されます。"}); }, style:{ fontSize:12, cursor:"pointer", opacity:0.8 }}, "ℹ️")
                     )
-                    , React.createElement('div', { className: (!pulseOff.prevH) ? 'ob-pulse' : '', style: {
+                    , React.createElement('div', { className: (!pulseOff.prevH) ? 'ob-pulse' : '', onClick: ()=>{ vibe(50); setPulseOff(p=>({...p,prevH:true})); const c=parseHM(prevH); openPad({
+                          title:"前年度 年休所得時間",mode:"hm",
+                          initH:c!==null?Math.floor(c/60):0,
+                          initM:c!==null?c%60:0,
+                          onConfirm:(h,m)=>{ setPrevH(`${h}:${String(m).padStart(2,"0")}`); closePad(); },
+                        }); }, style: {
                         ...IS, cursor:"pointer", userSelect:"none",
                         color: prevH ? "#55ccff" : "#64748b",
                         fontWeight:700, fontSize:20,
@@ -18197,12 +18217,7 @@ function App() {
                         background:"rgba(0,170,255,0.18)",
                         border:"1px solid rgba(0,170,255,0.95)",
                       }}
-                      , React.createElement('span', { onClick: ()=>{ vibe(50); setPulseOff(p=>({...p,prevH:true})); const c=parseHM(prevH); openPad({
-                          title:"前年度 年休所得時間",mode:"hm",
-                          initH:c!==null?Math.floor(c/60):0,
-                          initM:c!==null?c%60:0,
-                          onConfirm:(h,m)=>{ setPrevH(`${h}:${String(m).padStart(2,"0")}`); closePad(); },
-                        }); } }, prevH || "0:00")
+                      , React.createElement('span', null, prevH || "0:00")
                     )
                   )
                   /* 今年度 */
@@ -18211,7 +18226,12 @@ function App() {
                       , React.createElement('span', null, "今年度")
                       , React.createElement('span', { onClick: e=>{ e.stopPropagation(); setInfoPopup({title:"今年度 年休所得時間", desc:"今年度に新たに付与された年休の時間を入力して下さい。前年度分を使い切った後にこちらが消費されます。"}); }, style:{ fontSize:12, cursor:"pointer", opacity:0.8 }}, "ℹ️")
                     )
-                    , React.createElement('div', { className: (!pulseOff.currH) ? 'ob-pulse' : '', style: {
+                    , React.createElement('div', { className: (!pulseOff.currH) ? 'ob-pulse' : '', onClick: ()=>{ vibe(50); setPulseOff(p=>({...p,currH:true})); const c=parseHM(currH); openPad({
+                          title:"今年度 年休所得時間",mode:"hm",
+                          initH:c!==null?Math.floor(c/60):153,
+                          initM:c!==null?c%60:0,
+                          onConfirm:(h,m)=>{ setCurrH(`${h}:${String(m).padStart(2,"0")}`); closePad(); },
+                        }); }, style: {
                         ...IS, cursor:"pointer", userSelect:"none",
                         color: currH ? "#55ccff" : "#64748b",
                         fontWeight:700, fontSize:20,
@@ -18220,12 +18240,7 @@ function App() {
                         background:"rgba(0,170,255,0.18)",
                         border:"1px solid rgba(0,170,255,0.95)",
                       }}
-                      , React.createElement('span', { onClick: ()=>{ vibe(50); setPulseOff(p=>({...p,currH:true})); const c=parseHM(currH); openPad({
-                          title:"今年度 年休所得時間",mode:"hm",
-                          initH:c!==null?Math.floor(c/60):153,
-                          initM:c!==null?c%60:0,
-                          onConfirm:(h,m)=>{ setCurrH(`${h}:${String(m).padStart(2,"0")}`); closePad(); },
-                        }); } }, currH || "0:00")
+                      , React.createElement('span', null, currH || "0:00")
                     )
                   )
                 )
@@ -18690,10 +18705,10 @@ function App() {
                 e.currentTarget._sx=null;
                 // 横スワイプ（横>縦 かつ 50px以上）のみタブ切替
                 if(Math.abs(dx)>=50 && Math.abs(dx)>Math.abs(dy)){
-                  if(!allPulseOff) return;
+                  const idx=TABS.indexOf(tab);
+                  const next=dx<0?TABS[Math.min(idx+1,TABS.length-1)]:TABS[Math.max(idx-1,0)];
+                  if(!allPulseOff && next!=='help'){ showBlockToast(); return; }
                   setTab(prev=>{
-                    const idx=TABS.indexOf(prev);
-                    const next=dx<0?TABS[Math.min(idx+1,TABS.length-1)]:TABS[Math.max(idx-1,0)];
                     setTimeout(()=>setAnimatingTab(next), 30);
                     return next;
                   });
@@ -18763,7 +18778,7 @@ function App() {
         , tab==="help" && (
           React.createElement('div', { style: { overflowY:"auto", height:"calc(100vh - 195px)", display:"flex", flexDirection:"column", gap:14, paddingBottom:24 },
             onTouchStart: e=>{ e.stopPropagation(); const t=e.touches[0]; e.currentTarget._sx=t.clientX; e.currentTarget._sy=t.clientY; },
-            onTouchEnd: e=>{ e.stopPropagation(); const sx=e.currentTarget._sx,sy=e.currentTarget._sy; if(sx==null)return; const dx=e.changedTouches[0].clientX-sx,dy=e.changedTouches[0].clientY-sy; e.currentTarget._sx=null; if(Math.abs(dx)>=50&&Math.abs(dx)>Math.abs(dy)){ if(!allPulseOff) return; setTab(prev=>{ const idx=TABS.indexOf(prev); const next=dx<0?TABS[Math.min(idx+1,TABS.length-1)]:TABS[Math.max(idx-1,0)]; setTimeout(()=>setAnimatingTab(next),30); return next; }); } }}
+            onTouchEnd: e=>{ e.stopPropagation(); const sx=e.currentTarget._sx,sy=e.currentTarget._sy; if(sx==null)return; const dx=e.changedTouches[0].clientX-sx,dy=e.changedTouches[0].clientY-sy; e.currentTarget._sx=null; if(Math.abs(dx)>=50&&Math.abs(dx)>Math.abs(dy)){ const idx=TABS.indexOf(tab); const next=dx<0?TABS[Math.min(idx+1,TABS.length-1)]:TABS[Math.max(idx-1,0)]; if(!allPulseOff && next!=='main'){ showBlockToast(); return; } setTab(prev=>{ setTimeout(()=>setAnimatingTab(next),30); return next; }); } }}
 
 
             /* セクションヘルパー */
@@ -18994,7 +19009,6 @@ function App() {
           , React.createElement('div', { style: { display:"flex", justifyContent:"center" }}
             , React.createElement('button', { onClick: ()=>{
               vibe(50);
-              localStorage.setItem('onboarding_done','1');
               setShowOnboarding(false);
             }, style: {
               padding:"10px 36px",
