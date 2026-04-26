@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
   <meta name="apple-mobile-web-app-title" content="年休管理"/>
   <meta name="mobile-web-app-capable" content="yes"/>
-  <meta name="theme-color" content="#0f172a"/>
+  <meta name="theme-color" content="#f8fafc"/>
   <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20180%20180%22%3E%3Crect%20width%3D%22180%22%20height%3D%22180%22%20rx%3D%2234%22%20fill%3D%22%238DB84C%22%2F%3E%3Ctext%20x%3D%2290%22%20y%3D%22128%22%20font-size%3D%22108%22%20text-anchor%3D%22middle%22%20font-family%3D%22sans-serif%22%3E%F0%9F%97%93%3C%2Ftext%3E%3C%2Fsvg%3E"/>
   <title>年休管理</title>
   <script id="pwa-manifest-data" type="application/json">{
@@ -16,8 +16,8 @@
   "description": "年次有給休暇 管理アプリ",
   "start_url": "./",
   "display": "standalone",
-  "background_color": "#0f172a",
-  "theme_color": "#6366f1",
+  "background_color": "#f8fafc",
+  "theme_color": "#5a9a20",
   "icons": [
     {
       "src": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20192%20192%22%3E%3Crect%20width%3D%22192%22%20height%3D%22192%22%20rx%3D%2236%22%20fill%3D%22%238DB84C%22%2F%3E%3Ctext%20x%3D%2296%22%20y%3D%22130%22%20font-size%3D%22110%22%20text-anchor%3D%22middle%22%20font-family%3D%22sans-serif%22%3E%F0%9F%97%93%3C%2Ftext%3E%3C%2Fsvg%3E",
@@ -48,12 +48,12 @@
       100% { opacity: 1; }
     }
     @keyframes tab-color-fadein {
-      0%   { color: #475569; }
-      100% { color: #a5b4fc; }
+      0%   { color: var(--tab-anim-from, #94a3b8); }
+      100% { color: var(--tab-anim-to, #4f46e5); }
     }
     @keyframes tab-border-fadein {
       0%   { border-top-color: transparent; }
-      100% { border-top-color: #6366f1; }
+      100% { border-top-color: var(--tab-border-to, #4f46e5); }
     }
     .tab-active-icon  { animation: tab-bounce 0.05s ease-out; }
     .tab-active-bg    { animation: tab-fadein 0.06s ease-in-out; }
@@ -64,9 +64,9 @@
     }
     .ob-pulse { animation: ob-pulse 1.2s ease-in-out infinite; }
     *{box-sizing:border-box;margin:0;padding:0}
-    html,body,#root{height:100%;background:#0f172a}
+    html,body,#root{height:100%;background:var(--bg-root,#f8fafc)}
     body{font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif}
-    select option{background:#1e293b;color:#e2e8f0}
+    select option{background:var(--select-bg,#f8fafc);color:var(--select-color,#1e293b)}
   </style>
 </head>
 <body>
@@ -17301,12 +17301,249 @@ const dowType = (d, holidays) => {
   const w=new Date(d).getDay();
   return w===0||(holidays||FALLBACK_HOLIDAYS).has(d)?"hol": w===6?"sat":"wd";
 };
-const dowBadge = (d, holidays) => {
+const dowBadge = (d, holidays, T) => {
   const t=dowType(d, holidays);
+  const isLight = T && typeof THEMES !== 'undefined' && T===THEMES.light;
+  const weekdayColor = isLight ? "#7c3aed" : "#a5b4fc";
+  const weekdayBg    = isLight ? "rgba(124,0,255,0.12)" : "rgba(99,102,241,0.2)";
   return t==="hol"?{bg:"rgba(248,113,113,0.2)",c:"#f87171"}
         :t==="sat"?{bg:"rgba(96,165,250,0.2)", c:"#60a5fa"}
-        :           {bg:"rgba(99,102,241,0.2)", c:"#a5b4fc"};
+        :           {bg:weekdayBg, c:weekdayColor};
 };
+
+
+// ─── テーマ定数 ──────────────────────────────────────────
+const THEMES = {
+  light: {
+    bgRoot: "#f8fafc",
+    selectBg: "#f8fafc",
+    selectColor: "#1e293b",
+    tabAnimFrom: "#94a3b8",
+    tabAnimTo: "#7c00ff",
+    tabBorderTo: "#4f46e5",
+    themeColor: "#f8fafc",
+    bgColor: "#f8fafc",
+    // IS (input style)
+    IS_bg: "rgba(0,0,0,0.06)", IS_border: "1px solid rgba(0,0,0,0.09)", IS_color: "#1e293b",
+    // numpad
+    np_bg: "linear-gradient(135deg,#ffffff,#f8fafc)", np_border: "1px solid rgba(0,0,0,0.09)",
+    np_title: "#4f46e5",
+    np_colon: "#64748b",
+    np_btnBg: "rgba(0,0,0,0.08)", np_btnColor: "#000000",
+    np_actColor: "#000000",
+    np_clrBg: "rgba(0,0,0,0.05)", np_clrBorder: "1px solid rgba(0,0,0,0.09)", np_clrColor: "#64748b",
+    // field
+    fld_label: "#64748b",
+    fld_color_normal: "#000000",
+    fld_color_accent: "#4f46e5",
+    fld_border_accent: "1px solid rgba(79,70,229,0.5)",
+    fld_border_normal: "1px solid rgba(0,0,0,0.12)",
+    fld_kbd: "#64748b",
+    // popup (年休所得時間)
+    pp_bg: "linear-gradient(135deg,#ffffff,#f8fafc)", pp_border: "1px solid rgba(0,0,0,0.09)",
+    pp_title: "#4f46e5",
+    pp_total: "#4f46e5",
+    pp_colLabel: "#334155",
+    pp_clrBg: "rgba(0,0,0,0.05)", pp_clrBorder: "1px solid rgba(0,0,0,0.09)", pp_clrColor: "#64748b",
+    // records list card
+    rc_cardBg: "rgba(0,0,0,0.07)", rc_cardBorder: "1px solid rgba(0,0,0,0.08)",
+    rc_innerBorder: "1px solid rgba(0,0,0,0.13)",
+    // new entry area
+    ne_bg: "rgba(0,0,0,0.06)", ne_border: "1px solid rgba(0,0,0,0.09)",
+    ne_title: "#4f46e5",
+    ne_label: "#64748b",
+    ne_cancelBg: "rgba(0,0,0,0.06)", ne_cancelBorder: "1px solid rgba(0,0,0,0.09)", ne_cancelColor: "#64748b",
+    addBtnBg: "linear-gradient(135deg,#2563eb,#7c3aed)",
+    // main screen
+    main_bg: "linear-gradient(135deg,#f8fafc 0%,#f1f5f9 50%,#f8fafc 100%)",
+    main_color: "#1e293b",
+    main_headerBorder: "1px solid rgba(0,0,0,0.09)",
+    main_subLabel: "#64748b",
+    headerBg: "rgba(241,245,249,0.92)",
+    scrollerFade: "rgba(241,245,249,0.85)",
+    inputVal: "#0077ff",
+    badgePurple: "#9333ea",
+    tabActiveColor: "#7c00ff",
+    // cards
+    card_bg: "rgba(0,0,0,0.05)", card_border: "1px solid rgba(0,0,0,0.11)",
+    card_label: "#334155",
+    card_label2: "#64748b",
+    card_border2: "1px solid rgba(0,0,0,0.08)",
+    // goal card
+    goal_btnBg: "rgba(0,0,0,0.07)", goal_btnBorder: "1px solid rgba(0,0,0,0.09)", goal_btnColor: "#1e293b",
+    goal_diffBorder_ok: "rgba(255,255,255,0.08)",
+    goal_diffLabel: "#334155",
+    // help
+    help_sectionBg: "rgba(0,0,0,0.06)",
+    help_sectionColor: "#334155",
+    help_listLabel: "#1e293b",
+    help_listDesc: "#64748b",
+    help_accentColor: "#4f46e5",
+    // records entry card
+    re_bg: "rgba(0,0,0,0.06)", re_border: "1px solid rgba(0,0,0,0.09)",
+    re_dateColor: "#1e293b",
+    re_diaColor: "#7c3aed",
+    re_noColor: "#000000", re_noBg: "rgba(0,0,0,0.06)",
+    re_workColor_fill: "#000000", re_workColor_empty: "#000000",
+    re_editColor: "#4f46e5",
+    re_emptyColor: "#64748b",
+    // hayami
+    hay_prevBg: "rgba(0,0,0,0.06)", hay_prevBorder: "rgba(0,0,0,0.18)",
+    hay_badgeBg: "rgba(0,0,0,0.08)", hay_badgeColor: "#64748b",
+    hay_remLabel: "#64748b",
+    hay_remColor_normal: "#64748b",
+    hay_tgtColor: "#64748b",
+    hay_judgeColor: "#64748b",
+    hay_rowBg_normal: "rgba(0,0,0,0.06)",
+    hay_rowBorder_normal: "rgba(0,0,0,0.09)",
+    hay_baseLabel: "#64748b",
+    hay_judgeLabel: "#64748b",
+    hay_dc_default: "#94a3b8",
+    // modal
+    modal_bg: "#ffffff", modal_border: "1px solid rgba(0,0,0,0.09)",
+    modal_title: "#0f172a",
+    modal_cancelBg: "rgba(79,70,229,0.1)", modal_cancelBorder: "1px solid rgba(0,0,0,0.09)", modal_cancelColor: "#4f46e5",
+    modal_infoBg: "#ffffff",
+    modal_infoTitle: "#4f46e5",
+    modal_infoDesc: "#334155",
+    modal_infoBtnBg: "rgba(79,70,229,0.12)", modal_infoBtnBorder: "1px solid rgba(0,0,0,0.09)", modal_infoBtnColor: "#4f46e5",
+    modal_onbBg: "linear-gradient(135deg,#ffffff 0%,#f8fafc 100%)",
+    modal_onbBorder: "1.5px solid rgba(0,0,0,0.12)",
+    modal_onbTitle: "#4f46e5",
+    modal_onbText: "#1e293b",
+    modal_onbSub: "#64748b",
+    modal_onbAccent: "#4f46e5",
+    modal_renewBg: "linear-gradient(135deg,#ffffff 0%,#f8fafc 100%)",
+    modal_renewBorder: "1.5px solid rgba(0,0,0,0.12)",
+    modal_renewTitle: "#4f46e5",
+    modal_renewText: "#1e293b",
+    modal_noticeBg: "linear-gradient(135deg,#ffffff 0%,#f8fafc 100%)",
+    modal_noticeText: "#1e293b",
+    // tabbar
+    tab_bg: "rgba(248,250,252,0.97)",
+    tab_border: "1px solid rgba(0,0,0,0.09)",
+    // overlay (inactive tab bg)
+    tabOverlay_bg: "rgba(79,70,229,0.12)",
+    // warn overlay
+    warn_bg: "rgba(79,70,229,0.1)", warn_border: "1.5px solid rgba(0,0,0,0.12)",
+    warn_text: "#1e293b",
+    warn_sub: "#64748b",
+  },
+  dark: {
+    bgRoot: "#0f172a",
+    selectBg: "#1e293b",
+    selectColor: "#e2e8f0",
+    tabAnimFrom: "#475569",
+    tabAnimTo: "#a5b4fc",
+    tabBorderTo: "#6366f1",
+    themeColor: "#0f172a",
+    bgColor: "#0f172a",
+    IS_bg: "rgba(255,255,255,0.07)", IS_border: "1px solid rgba(255,255,255,0.12)", IS_color: "#e2e8f0",
+    np_bg: "linear-gradient(135deg,#1e293b,#0f172a)", np_border: "1px solid rgba(99,102,241,0.4)",
+    np_title: "#a5b4fc",
+    np_colon: "#475569",
+    np_btnBg: "rgba(255,255,255,0.06)", np_btnColor: "#a5b4fc",
+    np_actColor: "#f87171",
+    np_clrBg: "rgba(255,255,255,0.07)", np_clrBorder: "1px solid rgba(255,255,255,0.12)", np_clrColor: "#94a3b8",
+    fld_label: "#94a3b8",
+    fld_color_normal: "#e2e8f0",
+    fld_color_accent: "#a5b4fc",
+    fld_border_accent: "1px solid rgba(99,102,241,0.4)",
+    fld_border_normal: "1px solid rgba(255,255,255,0.12)",
+    fld_kbd: "#475569",
+    pp_bg: "linear-gradient(135deg,#1e293b,#0f172a)", pp_border: "1px solid rgba(99,102,241,0.4)",
+    pp_title: "#a5b4fc",
+    pp_total: "#a5b4fc",
+    pp_colLabel: "#cbd5e1",
+    pp_clrBg: "rgba(255,255,255,0.07)", pp_clrBorder: "1px solid rgba(255,255,255,0.12)", pp_clrColor: "#94a3b8",
+    rc_cardBg: "rgba(255,255,255,0.04)", rc_cardBorder: "1px solid rgba(255,255,255,0.1)",
+    rc_innerBorder: "1px solid rgba(99,102,241,0.5)",
+    ne_bg: "rgba(99,102,241,0.08)", ne_border: "1px solid rgba(99,102,241,0.3)",
+    ne_title: "#a5b4fc",
+    ne_label: "#94a3b8",
+    ne_cancelBg: "rgba(255,255,255,0.08)", ne_cancelBorder: "1px solid rgba(255,255,255,0.15)", ne_cancelColor: "#94a3b8",
+    addBtnBg: "linear-gradient(135deg,#6366f1,#8b5cf6)",
+    main_bg: "linear-gradient(135deg,#0f172a 0%,#1e293b 50%,#0f172a 100%)",
+    main_color: "#e2e8f0",
+    main_headerBorder: "1px solid rgba(99,102,241,0.3)",
+    main_subLabel: "#94a3b8",
+    headerBg: "rgba(15,23,42,0.85)",
+    scrollerFade: "rgba(15,23,42,0.85)",
+    inputVal: "#55ccff",
+    badgePurple: "#a5b4fc",
+    tabActiveColor: "#a5b4fc",
+    card_bg: "rgba(255,255,255,0.05)", card_border: "1px solid rgba(99,102,241,0.3)",
+    card_label: "#cbd5e1",
+    card_label2: "#cbd5e1",
+    card_border2: "1px solid rgba(255,255,255,0.08)",
+    goal_btnBg: "rgba(255,255,255,0.1)", goal_btnBorder: "1px solid rgba(255,255,255,0.4)", goal_btnColor: "#e2e8f0",
+    goal_diffBorder_ok: "rgba(255,255,255,0.08)",
+    goal_diffLabel: "#cbd5e1",
+    help_sectionBg: "rgba(255,255,255,0.03)",
+    help_sectionColor: "#cbd5e1",
+    help_listLabel: "#e2e8f0",
+    help_listDesc: "#94a3b8",
+    help_accentColor: "#a5b4fc",
+    re_bg: "rgba(255,255,255,0.04)", re_border: "1px solid rgba(255,255,255,0.08)",
+    re_dateColor: "#e2e8f0",
+    re_diaColor: "#c4b5fd",
+    re_noColor: "#94a3b8", re_noBg: "rgba(255,255,255,0.08)",
+    re_workColor_fill: "#34d399", re_workColor_empty: "#64748b",
+    re_editColor: "#a5b4fc",
+    re_emptyColor: "#475569",
+    hay_prevBg: "rgba(99,102,241,0.1)", hay_prevBorder: "rgba(99,102,241,0.35)",
+    hay_badgeBg: "rgba(99,102,241,0.3)", hay_badgeColor: "#a5b4fc",
+    hay_remLabel: "#94a3b8",
+    hay_remColor_normal: "#a5b4fc",
+    hay_tgtColor: "#94a3b8",
+    hay_judgeColor: "#94a3b8",
+    hay_rowBg_normal: "rgba(255,255,255,0.03)",
+    hay_rowBorder_normal: "rgba(255,255,255,0.09)",
+    hay_baseLabel: "#94a3b8",
+    hay_judgeLabel: "#94a3b8",
+    hay_dc_default: "#cbd5e1",
+    modal_bg: "#1e293b", modal_border: "1px solid rgba(99,102,241,0.4)",
+    modal_title: "#ffffff",
+    modal_cancelBg: "rgba(99,102,241,0.15)", modal_cancelBorder: "1px solid rgba(99,102,241,0.4)", modal_cancelColor: "#a5b4fc",
+    modal_infoBg: "#1e293b",
+    modal_infoTitle: "#a5b4fc",
+    modal_infoDesc: "#cbd5e1",
+    modal_infoBtnBg: "rgba(99,102,241,0.2)", modal_infoBtnBorder: "1px solid rgba(99,102,241,0.4)", modal_infoBtnColor: "#a5b4fc",
+    modal_onbBg: "linear-gradient(135deg,#1e293b 0%,#0f172a 100%)",
+    modal_onbBorder: "1.5px solid rgba(99,102,241,0.6)",
+    modal_onbTitle: "#a5b4fc",
+    modal_onbText: "#e2e8f0",
+    modal_onbSub: "#94a3b8",
+    modal_onbAccent: "#a5b4fc",
+    modal_renewBg: "linear-gradient(135deg,#1e293b 0%,#0f172a 100%)",
+    modal_renewBorder: "1.5px solid rgba(99,102,241,0.7)",
+    modal_renewTitle: "#a5b4fc",
+    modal_renewText: "#e2e8f0",
+    modal_noticeBg: "linear-gradient(135deg,#1e293b 0%,#0f172a 100%)",
+    modal_noticeText: "#e2e8f0",
+    tab_bg: "rgba(10,18,35,0.96)",
+    tab_border: "1px solid rgba(99,102,241,0.35)",
+    tabOverlay_bg: "rgba(99,102,241,0.2)",
+    warn_bg: "rgba(99,102,241,0.13)", warn_border: "1.5px solid rgba(99,102,241,0.5)",
+    warn_text: "#e2e8f0",
+    warn_sub: "#94a3b8",
+  },
+};
+function applyThemeCSSVars(isDark) {
+  const T = isDark ? THEMES.dark : THEMES.light;
+  const r = document.documentElement.style;
+  r.setProperty('--bg-root', T.bgRoot);
+  r.setProperty('--select-bg', T.selectBg);
+  r.setProperty('--select-color', T.selectColor);
+  r.setProperty('--tab-anim-from', T.tabAnimFrom);
+  r.setProperty('--tab-anim-to', T.tabAnimTo);
+  r.setProperty('--tab-border-to', T.tabBorderTo);
+  // theme-color meta
+  let mc = document.querySelector('meta[name="theme-color"]');
+  if(mc) mc.setAttribute('content', T.themeColor);
+}
+// 起動時に保存済みテーマを即時適用（チラつき防止）
+(function(){ const d=localStorage.getItem('nenkyuu_dark')==='1'; applyThemeCSSVars(d); })();
 
 // ─── storage ──────────────────────────────────────────────
 const SK = "nenkyuu_v2";
@@ -17318,11 +17555,11 @@ let _vibeOn = false;
 const vibe = (ms=12) => {};
 
 // ─── スタイル定数 ──────────────────────────────────────────
-const IS = {
-  background:"rgba(255,255,255,0.07)", border:"1px solid rgba(255,255,255,0.12)",
-  borderRadius:8, padding:"9px 10px", color:"#e2e8f0", fontSize:14,
+const IS = (T) => ({
+  background:T.IS_bg, border:T.IS_border,
+  borderRadius:8, padding:"9px 10px", color:T.IS_color, fontSize:14,
   width:"100%", boxSizing:"border-box", outline:"none",
-};
+});
 const nkBase = {
   border:"none", borderRadius:8, fontWeight:700, cursor:"pointer",
   display:"flex", alignItems:"center", justifyContent:"center",
@@ -17333,7 +17570,8 @@ const nkBase = {
 // テンキーモーダル
 // mode: "hm" → 時間と分を別々入力  |  "num" → 数値のみ
 // ─────────────────────────────────────────────────────────
-function NumpadModal({ title, mode="hm", initH=0, initM=0, initNum="", maxNum=999, maxH=null, onConfirm, onClose }) {
+function NumpadModal({ title, mode="hm", initH=0, initM=0, initNum="", maxNum=999, maxH=null, onConfirm, onClose, T }) {
+  if(!T) T = window.__appT || THEMES.light;
   const [h, setH]   = useState(String(initH));
   const [m, setM]   = useState(String(initM));
   const [focus, setFocus] = useState("h");
@@ -17400,9 +17638,9 @@ function NumpadModal({ title, mode="hm", initH=0, initM=0, initNum="", maxNum=99
   const focusStyle = f => ({
     flex:1, textAlign:"center", padding:"10px 8px", borderRadius:8, cursor:"pointer",
     fontWeight:700, fontSize:20, letterSpacing:"0.05em",
-    background: focus===f ? "rgba(99,102,241,0.35)" : "rgba(255,255,255,0.06)",
-    border: focus===f ? "2px solid rgba(99,102,241,0.7)" : "2px solid transparent",
-    color: focus===f ? "#a5b4fc" : "#94a3b8",
+    background: focus===f ? "rgba(99,102,241,0.35)" : T===THEMES.dark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.05)",
+    border: focus===f ? "2px solid rgba(99,102,241,0.7)" : T===THEMES.dark ? "2px solid transparent" : "2px solid rgba(0,0,0,0.18)",
+    color: (focus===f && T!==THEMES.dark) ? T.np_actColor : T.np_btnColor,
     transition:"all 0.15s",
   });
 
@@ -17413,30 +17651,30 @@ function NumpadModal({ title, mode="hm", initH=0, initM=0, initNum="", maxNum=99
       display:"flex", alignItems:"center", justifyContent:"center",
     }, onClick: e=>{ if(e.target===e.currentTarget) onClose(); }}
       , React.createElement('div', { style: {
-        background:"linear-gradient(135deg,#1e293b,#0f172a)",
-        border:"1px solid rgba(99,102,241,0.4)",
+        background:T.np_bg,
+        border:T.np_border,
         borderRadius:16, padding:20, width:280, maxWidth:"92vw",
         position:"relative",
       }}
         /* タイトル */
-        , React.createElement('div', { style: { fontSize:13, color:"#a5b4fc", fontWeight:600, marginBottom:12, textAlign:"center" }}, title)
+        , React.createElement('div', { style: { fontSize:13, color:T.np_title, fontWeight:600, marginBottom:12, textAlign:"center" }}, title)
 
         /* 表示エリア */
         , mode==="hm" ? (
           React.createElement('div', { style: { display:"flex", alignItems:"center", gap:6, marginBottom: overMax ? 6 : 16 }}
             , React.createElement('div', { style: focusStyle("h"), onClick: ()=>setFocus("h")}
-              , h, React.createElement('span', { style: { fontSize:12, color:"#64748b", marginLeft:2 }}, "時間")
+              , h, React.createElement('span', { style: { fontSize:12, color:T.np_clrColor, marginLeft:2 }}, "時間")
             )
-            , React.createElement('div', { style: { color:"#475569", fontWeight:700, fontSize:18 }}, ":")
+            , React.createElement('div', { style: { color:T.np_colon, fontWeight:700, fontSize:18 }}, ":")
             , React.createElement('div', { style: focusStyle("m"), onClick: ()=>setFocus("m")}
-              , mDisplay, React.createElement('span', { style: { fontSize:12, color:"#64748b", marginLeft:2 }}, "分")
+              , mDisplay, React.createElement('span', { style: { fontSize:12, color:T.np_clrColor, marginLeft:2 }}, "分")
             )
           )
         ) : (
           React.createElement('div', { style: {
             textAlign:"center", padding:"10px 8px", borderRadius:8, marginBottom:16,
-            background:"rgba(255,255,255,0.06)", border:"2px solid rgba(99,102,241,0.5)",
-            fontSize:24, fontWeight:700, color:"#a5b4fc", letterSpacing:"0.05em",
+            background:T.np_btnBg, border:"2px solid rgba(99,102,241,0.5)",
+            fontSize:24, fontWeight:700, color:T.np_btnColor, letterSpacing:"0.05em",
           }}
             , num || "0"
           )
@@ -17460,10 +17698,10 @@ function NumpadModal({ title, mode="hm", initH=0, initM=0, initNum="", maxNum=99
                 style: {
                   ...nkBase,
                   height:52,
-                  background: isAct ? "rgba(248,113,113,0.15)" : "rgba(255,255,255,0.07)",
-                  color: isAct ? "#f87171" : "#e2e8f0",
+                  background: isAct ? "rgba(248,113,113,0.15)" : (T===THEMES.light ? "rgba(0,0,0,0.09)" : T.np_btnBg),
+                  color: isAct ? "#f87171" : T.np_btnColor,
                   fontSize: k==="⌫" ? 18 : 20,
-                  border: isAct ? "1px solid rgba(248,113,113,0.25)" : "1px solid rgba(255,255,255,0.1)",
+                  border: isAct ? "1px solid rgba(248,113,113,0.25)" : T.np_clrBorder,
                 }}
                 , k
               )
@@ -17475,8 +17713,8 @@ function NumpadModal({ title, mode="hm", initH=0, initM=0, initNum="", maxNum=99
         , React.createElement('div', { style: { display:"grid", gridTemplateColumns:"1fr 1fr", gap:8, marginTop:12 }}
           , React.createElement('button', { onClick: ()=>{ vibe(50); onClose(); }, style: {
             ...nkBase, height:44, fontSize:13,
-            background:"rgba(255,255,255,0.07)", border:"1px solid rgba(255,255,255,0.12)",
-            color:"#94a3b8",
+            background:T.np_clrBg, border:T.np_clrBorder,
+            color:T.np_clrColor,
           }}, "キャンセル")
           , React.createElement('button', { onClick: ()=>{ if(!overMax) vibe(50); confirm(); }, style: {
             ...nkBase, height:44, fontSize:13, fontWeight:700,
@@ -17492,22 +17730,22 @@ function NumpadModal({ title, mode="hm", initH=0, initM=0, initNum="", maxNum=99
 
 // ─── テンキー表示ボックス（タップで開く） ─────────────────
 // variant: "hm" | "num"
-function NumpadField({ label, value, placeholder, onTap, accent=false }) {
+function NumpadField({ label, value, placeholder, onTap, accent=false, T=THEMES.light }) {
   return (
     React.createElement('div', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 240}}
-      , label && React.createElement('div', { style: { fontSize:10, color:"#94a3b8", marginBottom:3 }}, label)
+      , label && React.createElement('div', { style: { fontSize:10, color:T.fld_label, marginBottom:3 }}, label)
       , React.createElement('div', { onClick: ()=>{ vibe(50); onTap(); }, style: {
-        ...IS, cursor:"pointer", userSelect:"none",
-        color: value ? (accent?"#a5b4fc":"#e2e8f0") : "#64748b",
+        ...IS(T), cursor:"pointer", userSelect:"none",
+        color: value ? (accent?T.fld_color_accent:T.fld_color_normal) : "#64748b",
         fontWeight: accent ? 700 : 400,
         fontSize: accent ? 20 : 14,
         display:"flex", alignItems:"center", justifyContent:"space-between",
         padding: accent ? "10px 14px" : "9px 10px",
-        background: accent ? "rgba(99,102,241,0.15)" : "rgba(255,255,255,0.07)",
-        border: accent ? "1px solid rgba(99,102,241,0.4)" : "1px solid rgba(255,255,255,0.12)",
+        background: accent ? "rgba(99,102,241,0.15)" : T.IS_bg,
+        border: accent ? T.fld_border_accent : T.fld_border_normal,
       }}
         , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 252}}, value || placeholder)
-        , React.createElement('span', { style: { fontSize:11, color:"#475569" }}, "⌨")
+        , React.createElement('span', { style: { fontSize:11, color:T.fld_kbd }}, "⌨")
       )
     )
   );
@@ -17516,7 +17754,7 @@ function NumpadField({ label, value, placeholder, onTap, accent=false }) {
 // ─── ドラム式ピッカーモーダル（年休所得時間用） ─────────
 // 時間: 百の位(0-1) 十の位(0-9) 一の位(0-9)  最大199
 // 分  : 十の位(0-5) 一の位(0-9)              最大59
-function DrumPickerModal({ initH=153, initM=0, onConfirm, onClose }) {
+function DrumPickerModal({ initH=153, initM=0, onConfirm, onClose, T=THEMES.light }) {
   // 各桁を分解
   const clampH = h => Math.min(199, Math.max(0, h));
   const initDigits = h => {
@@ -17555,17 +17793,17 @@ function DrumPickerModal({ initH=153, initM=0, onConfirm, onClose }) {
       display:"flex", alignItems:"center", justifyContent:"center",
     }, onClick: e=>{ if(e.target===e.currentTarget) onClose(); }}
       , React.createElement('div', { style: {
-        background:"linear-gradient(135deg,#1e293b,#0f172a)",
-        border:"1px solid rgba(99,102,241,0.4)",
+        background:T.np_bg,
+        border:T.np_border,
         borderRadius:16, padding:20, width:300, maxWidth:"94vw",
       }}
-        , React.createElement('div', { style: { fontSize:13, color:"#a5b4fc", fontWeight:600, marginBottom:16, textAlign:"center" }}, "年休所得時間"
+        , React.createElement('div', { style: { fontSize:13, color:T.pp_title, fontWeight:600, marginBottom:16, textAlign:"center" }}, "年休所得時間"
 
         )
 
         /* プレビュー */
         , React.createElement('div', { style: {
-          textAlign:"center", fontSize:22, fontWeight:700, color:"#a5b4fc",
+          textAlign:"center", fontSize:22, fontWeight:700, color:T.pp_total,
           marginBottom:16, letterSpacing:"0.05em",
         }}
           , hd[0]*100+hd[1]*10+hd[2], ":", String(md[0]*10+md[1]).padStart(2,"0")
@@ -17575,14 +17813,14 @@ function DrumPickerModal({ initH=153, initM=0, onConfirm, onClose }) {
         , React.createElement('div', { style: { display:"flex", alignItems:"flex-start", justifyContent:"center", gap:24, marginBottom:20 }}
           , COLS.map((col, ci) => (
             React.createElement('div', { key: ci, style: { display:"flex", flexDirection:"column", alignItems:"center", gap:4 }}
-              , React.createElement('div', { style: { fontSize:10, color:"#cbd5e1", marginBottom:2 }}, col.label)
+              , React.createElement('div', { style: { fontSize:10, color:T.pp_colLabel, marginBottom:2 }}, col.label)
               , React.createElement('div', { style: { display:"flex", gap:3 }}
                 , col.ranges.map((range, di) => {
                   const items = Array.from({length: range[1]-range[0]+1}, (_,i)=>i+range[0]);
                   const val   = col.digits[di];
 
                   return (
-                    React.createElement(DrumColumn, {
+                    React.createElement(DrumColumn, { T:T,
                       key: di,
                       items: items,
                       value: val,
@@ -17603,7 +17841,7 @@ function DrumPickerModal({ initH=153, initM=0, onConfirm, onClose }) {
         , React.createElement('div', { style: { display:"grid", gridTemplateColumns:"1fr 1fr", gap:8 }}
           , React.createElement('button', { onClick: ()=>{ vibe(50); onClose(); }, style: {
             ...nkBase, height:44, fontSize:13,
-            background:"rgba(255,255,255,0.07)", border:"1px solid rgba(255,255,255,0.12)", color:"#94a3b8",
+            background:T.pp_clrBg, border:T.pp_clrBorder, color:T.pp_clrColor,
           }}, "キャンセル")
           , React.createElement('button', { onClick: ()=>{ vibe(50); confirm(); }, style: {
             ...nkBase, height:44, fontSize:13, fontWeight:700,
@@ -17616,7 +17854,7 @@ function DrumPickerModal({ initH=153, initM=0, onConfirm, onClose }) {
 }
 
 // ─── ドラムの1カラム ──────────────────────────────────────
-function DrumColumn({ items, value, onChange }) {
+function DrumColumn({ items, value, onChange, T=THEMES.light }) {
   const ITEM_H = 44;
   const VISIBLE = 5;
   const containerH = ITEM_H * VISIBLE;
@@ -17676,25 +17914,25 @@ function DrumColumn({ items, value, onChange }) {
 
   return (
     React.createElement('div', { style: { position:"relative", width:52, height:containerH, overflow:"hidden", borderRadius:10,
-      background:"rgba(255,255,255,0.04)", border:"1px solid rgba(255,255,255,0.1)" }}
+      background:T.rc_cardBg, border:T.rc_cardBorder }}
       /* 選択枠 */
       , React.createElement('div', { style: {
         position:"absolute", top:"50%", left:0, right:0,
         height:ITEM_H, transform:"translateY(-50%)",
         background:"rgba(99,102,241,0.18)",
-        border:"1px solid rgba(99,102,241,0.5)",
+        border:T.rc_innerBorder,
         borderRadius:8, pointerEvents:"none", zIndex:2,
       }})
       /* 上グラデ */
       , React.createElement('div', { style: {
         position:"absolute", top:0, left:0, right:0, height:ITEM_H*2,
-        background:"linear-gradient(to bottom,rgba(15,23,42,0.85),transparent)",
+        background:"linear-gradient(to bottom,"+T.scrollerFade+",transparent)",
         pointerEvents:"none", zIndex:3,
       }})
       /* 下グラデ */
       , React.createElement('div', { style: {
         position:"absolute", bottom:0, left:0, right:0, height:ITEM_H*2,
-        background:"linear-gradient(to top,rgba(15,23,42,0.85),transparent)",
+        background:"linear-gradient(to top,"+T.scrollerFade+",transparent)",
         pointerEvents:"none", zIndex:3,
       }})
       /* スクロールリスト */
@@ -17727,11 +17965,11 @@ function DrumColumn({ items, value, onChange }) {
 }
 
 // ─── インライン編集フォーム ────────────────────────────────
-function EditForm({ entry, workPerDay, holidays, onSave, onCancel }) {
+function EditForm({ entry, workPerDay, holidays, onSave, onCancel, T=THEMES.light }) {
   const [draft, setDraft] = useState({...entry});
   const [pad, setPad]     = useState(null); // {field, ...props}
   const set = (k,v) => setDraft(p=>({...p,[k]:v,...(k==="date"?{dow:fillDow(v)}:{})}));
-  const badge = dowBadge(draft.date, holidays);
+  const badge = dowBadge(draft.date, holidays, T);
 
   const openWorkTime = () => {
     const cur = parseHM(draft.workTime);
@@ -17743,10 +17981,10 @@ function EditForm({ entry, workPerDay, holidays, onSave, onCancel }) {
 
   return (
     React.createElement('div', { style: { display:"flex", flexDirection:"column", gap:8, marginTop:8,
-      background:"rgba(99,102,241,0.08)", border:"1px solid rgba(99,102,241,0.3)",
+      background:T.ne_bg, border:T.ne_border,
       borderRadius:10, padding:12 }}
 
-      , pad && React.createElement(NumpadModal, {
+      , pad && React.createElement(NumpadModal, { T:T,
         title: pad.field==="workTime"?"労働時間を入力":"番号を入力",
         mode: pad.mode,
         initH: pad.initH, initM: pad.initM, initNum: pad.initNum,
@@ -17761,28 +17999,28 @@ function EditForm({ entry, workPerDay, holidays, onSave, onCancel }) {
 
       , React.createElement('div', { style: { display:"grid", gridTemplateColumns:"1fr 60px", gap:8 }}
         , React.createElement('div', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 505}}
-          , React.createElement('div', { style: { fontSize:10, color:"#94a3b8", marginBottom:3 }}, "使用日")
-          , React.createElement('input', { type: "date", value: draft.date, onChange: e=>set("date",e.target.value), style: IS})
+          , React.createElement('div', { style: { fontSize:10, color:T.ne_label, marginBottom:3 }}, "使用日")
+          , React.createElement('input', { type: "date", value: draft.date, onChange: e=>set("date",e.target.value), style: IS(T)})
         )
         , React.createElement('div', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 509}}
-          , React.createElement('div', { style: { fontSize:10, color:"#94a3b8", marginBottom:3 }}, "曜日")
-          , React.createElement('div', { style: { ...IS, textAlign:"center", color:badge.c, fontWeight:700,
+          , React.createElement('div', { style: { fontSize:10, color:T.ne_label, marginBottom:3 }}, "曜日")
+          , React.createElement('div', { style: { ...IS(T), textAlign:"center", color:badge.c, fontWeight:700,
             display:"flex", alignItems:"center", justifyContent:"center" }}, draft.dow)
         )
       )
 
       , React.createElement('div', { style: { display:"grid", gridTemplateColumns:"1fr 1fr", gap:8 }}
         , React.createElement('div', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 517}}
-          , React.createElement('div', { style: { fontSize:10, color:"#94a3b8", marginBottom:3 }}, "ダイヤ")
-          , React.createElement('select', { value: draft.diamond, onChange: e=>set("diamond",e.target.value), style: IS}
+          , React.createElement('div', { style: { fontSize:10, color:T.ne_label, marginBottom:3 }}, "ダイヤ")
+          , React.createElement('select', { value: draft.diamond, onChange: e=>set("diamond",e.target.value), style: IS(T)}
             , DTYPES.map(d=>React.createElement('option', { key: d}, d))
           )
         )
-        , React.createElement(NumpadField, { label: "番号", value: draft.diamondNo, placeholder: "未入力",
+        , React.createElement(NumpadField, { T:T, label: "番号", value: draft.diamondNo, placeholder: "未入力",
           onTap: openNo})
       )
 
-      , React.createElement(NumpadField, { label: "労働時間", value: draft.workTime, placeholder: "タップして入力",
+      , React.createElement(NumpadField, { T:T, label: "労働時間", value: draft.workTime, placeholder: "タップして入力",
         onTap: openWorkTime})
 
       , React.createElement('div', { style: { display:"grid", gridTemplateColumns:"1fr 1fr", gap:8 }}
@@ -17790,8 +18028,8 @@ function EditForm({ entry, workPerDay, holidays, onSave, onCancel }) {
           background:"linear-gradient(135deg,#6366f1,#8b5cf6)", border:"none",
           borderRadius:8, padding:"9px", color:"#fff", fontSize:13, fontWeight:600, cursor:"pointer" }}, "✓ 保存" )
         , React.createElement('button', { onClick: ()=>{ vibe(50); onCancel(); }, style: {
-          background:"rgba(255,255,255,0.08)", border:"1px solid rgba(255,255,255,0.15)",
-          borderRadius:8, padding:"9px", color:"#94a3b8", fontSize:13, cursor:"pointer" }}, "キャンセル")
+          background:T.ne_bg, border:T.ne_border,
+          borderRadius:8, padding:"9px", color:T.ne_cancelColor, fontSize:13, cursor:"pointer" }}, "キャンセル")
       )
     )
   );
@@ -17799,6 +18037,17 @@ function EditForm({ entry, workPerDay, holidays, onSave, onCancel }) {
 
 // ─── メインアプリ ──────────────────────────────────────────
 function App() {
+  const [isDark, setIsDark] = React.useState(() => localStorage.getItem('nenkyuu_dark') === '1');
+  const T = isDark ? THEMES.dark : THEMES.light;
+  window.__appT = T;
+  const toggleTheme = () => {
+    setIsDark(d => {
+      const next = !d;
+      localStorage.setItem('nenkyuu_dark', next ? '1' : '0');
+      applyThemeCSSVars(next);
+      return next;
+    });
+  };
   const sv = load();
 
   // 1日の所定労働時間（分）
@@ -17951,7 +18200,7 @@ function App() {
     setMeta("apple-mobile-web-app-status-bar-style", "black-translucent");
     setMeta("apple-mobile-web-app-title", "年休管理");
     setMeta("mobile-web-app-capable", "yes");
-    setMeta("theme-color", "#0f172a");
+    setMeta("theme-color", T.themeColor);
     setMeta("application-name", "年休管理");
     // manifest をインラインで注入
     const manifest = {
@@ -17960,7 +18209,7 @@ function App() {
       description: "年次有給休暇 管理アプリ",
       start_url: window.location.href,
       display: "standalone",
-      background_color: "#0f172a",
+      background_color: T.bgColor,
       theme_color: "#6366f1",
       icons: [
         { src: "data:image/svg+xml," + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192"><rect width="192" height="192" rx="36" fill="#8DB84C"/><text x="96" y="130" font-size="110" text-anchor="middle" font-family="sans-serif">🗓</text></svg>`), sizes: "192x192", type: "image/svg+xml" },
@@ -18115,18 +18364,18 @@ function App() {
     }}
       , animatingTab===id && React.createElement('div', { key:'bg-'+id, className:'tab-active-bg', style: {
         position:"absolute", inset:0, borderRadius:10,
-        background:"rgba(99,102,241,0.2)", pointerEvents:"none",
+        background:T.tabOverlay_bg, pointerEvents:"none",
       }})
       , React.createElement('span', { key: 'icon-'+id+(animatingTab===id?'-on':'-off'), style: {
         fontSize:20, lineHeight:1, display:'block', position:"relative",
-        color: animatingTab===id ? "#a5b4fc" : "#475569",
+        color: animatingTab===id ? T.tabActiveColor : "#475569",
         animation: animatingTab===id ? 'tab-bounce 1.0s ease-out, tab-color-fadein 1.5s ease-in-out' : 'none',
       }}, TAB_ICONS[id])
       , React.createElement('span', { key: 'lbl-'+id+(animatingTab===id?'-on':'-off'), style: {
         fontSize:12, fontWeight: animatingTab===id ? 700 : 400,
         borderTop: animatingTab===id ? "2px solid #6366f1" : "2px solid transparent",
         paddingTop:3, width:"100%", textAlign:"center", position:"relative",
-        color: animatingTab===id ? "#a5b4fc" : "#475569",
+        color: animatingTab===id ? T.tabActiveColor : "#475569",
         animation: animatingTab===id ? 'tab-color-fadein 1.5s ease-in-out, tab-border-fadein 1.5s ease-in-out' : 'none',
       }}, lbl)
     )
@@ -18135,18 +18384,18 @@ function App() {
   return (
     React.createElement('div', { style: {
       minHeight:"100vh",
-      background:"linear-gradient(135deg,#0f172a 0%,#1e293b 50%,#0f172a 100%)",
+      background:T.main_bg,
       fontFamily:"'Noto Sans JP','Hiragino Kaku Gothic ProN',sans-serif",
-      color:"#e2e8f0",
+      color:T.main_color,
     }}
 
       /* グローバルテンキーモーダル */
-      , pad && React.createElement(NumpadModal, { ...pad, maxH: _nullishCoalesce(pad.maxH, () => (null)), onClose: closePad})
+      , pad && React.createElement(NumpadModal, { T:T, ...pad, maxH: _nullishCoalesce(pad.maxH, () => (null)), onClose: closePad})
 
       /* ─── Header ─── */
       , React.createElement('div', { style: {
-        background:"rgba(15,23,42,0.85)", backdropFilter:"blur(12px)",
-        borderBottom:"1px solid rgba(99,102,241,0.3)",
+        background:T.headerBg, backdropFilter:"blur(12px)",
+        borderBottom:T.main_headerBorder,
         padding:"12px 16px", position:"sticky", top:0, zIndex:100,
       }}
         , React.createElement('div', { style: { display:"flex", alignItems:"center", justifyContent:"space-between" }}
@@ -18156,9 +18405,22 @@ function App() {
               borderRadius:10, display:"flex", alignItems:"center", justifyContent:"center", fontSize:17,
             }}, "🗓")
             , React.createElement('div', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 820}}
-              , React.createElement('div', { style: { fontSize:17, fontWeight:700, letterSpacing:"0.05em" }}, "年休管理")
-              , React.createElement('div', { style: { fontSize:10, color:"#94a3b8" }}, "Annual Leave Calculator"  )
+              , React.createElement('div', { style: { fontSize:17, fontWeight:700, letterSpacing:"0.05em", color:isDark?"#e2e8f0":"#1e293b" }}, "年休管理")
+              , React.createElement('div', { style: { fontSize:10, color:isDark?"#e2e8f0":"#475569" }}, "Annual Leave Calculator"  )
             )
+            , React.createElement('button', {
+                onClick: ()=>{ vibe(30); toggleTheme(); },
+                style: {
+                  background: isDark ? "rgba(99,102,241,0.25)" : "rgba(0,0,0,0.07)",
+                  border: isDark ? "1px solid rgba(99,102,241,0.5)" : "1px solid rgba(0,0,0,0.12)",
+                  borderRadius: 20,
+                  padding: "4px 10px",
+                  cursor: "pointer",
+                  fontSize: 18,
+                  lineHeight: 1,
+                  display: "flex", alignItems: "center", gap: 4,
+                }
+              }, isDark ? "🌙" : "☀️")
           )
           , React.createElement('div', { style: { display:"flex", alignItems:"center", gap:6 }}
             , React.createElement('button', { onClick: ()=>{ if(!allPulseOff && tab!=='help'){ showBlockToast(); return; } exportData(); }, title: "JSONでエクスポート", style: {
@@ -18167,9 +18429,9 @@ function App() {
               color:"#ffa000", fontSize:12, fontWeight:600, cursor:"pointer",
             }}, "⬇ 出力" )
             , React.createElement('label', { onClick: e=>{ if(!allPulseOff && tab!=='help'){ e.preventDefault(); showBlockToast(); return; } vibe(50); }, title: "JSONからインポート", style: {
-              background:"rgba(0,255,128,0.12)", border:"1px solid rgba(0,255,128,0.7)",
+              background: isDark?"rgba(0,255,128,0.12)":"rgba(52,211,153,0.28)", border:"1px solid "+(isDark?"rgba(0,255,128,0.7)":"rgba(52,211,153,0.75)"),
               borderRadius:8, padding:"6px 10px",
-              color:"#00ff80", fontSize:12, fontWeight:600, cursor:"pointer", whiteSpace:"nowrap",
+              color: isDark?"#00ff80":"#047857", fontSize:12, fontWeight:600, cursor:"pointer", whiteSpace:"nowrap",
             }}, "⬆ 読込"
 
               , React.createElement('input', { type: "file", accept: ".json", onChange: e=>{ if(!allPulseOff && tab!=='help'){ showBlockToast(); e.target.value=''; return; } importData(e); }, style: {display:"none"}})
@@ -18192,14 +18454,14 @@ function App() {
 
               /* 年休所得時間カード */
               , React.createElement('div', { style: {
-                background:"rgba(255,255,255,0.05)", border:"1px solid rgba(99,102,241,0.3)",
+                background:T.card_bg, border:T.card_border,
                 borderRadius:12, padding:12,
               }}
-                , React.createElement('div', { style: { fontSize:13, color:"#cbd5e1", marginBottom:8 }}, "年休所得時間")
+                , React.createElement('div', { style: { fontSize:13, color:T.card_label, marginBottom:8 }}, "年休所得時間")
                 , React.createElement('div', { style: { display:"grid", gridTemplateColumns:"1fr 1fr", gap:8 }}
                   /* 前年度 */
                   , React.createElement('div', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 887}}
-                    , React.createElement('div', { style: { fontSize:11, color:"#94a3b8", marginBottom:3, display:"flex", alignItems:"center", justifyContent:"space-between", paddingRight:"14px" }}
+                    , React.createElement('div', { style: { fontSize:11, color:T.fld_label, marginBottom:3, display:"flex", alignItems:"center", justifyContent:"space-between", paddingRight:"14px" }}
                       , React.createElement('span', null, "前年度")
                       , React.createElement('span', { onClick: e=>{ e.stopPropagation(); setInfoPopup({title:"前年度 年休所得時間", desc:"前年度に付与・繰越された年休の時間を入力して下さい。前年度分は今年度分より先に消費されます。"}); }, style:{ fontSize:12, cursor:"pointer", opacity:0.8 }}, "ℹ️")
                     )
@@ -18209,8 +18471,8 @@ function App() {
                           initM:c!==null?c%60:0,
                           onConfirm:(h,m)=>{ setPrevH(`${h}:${String(m).padStart(2,"0")}`); closePad(); },
                         }); }, style: {
-                        ...IS, cursor:"pointer", userSelect:"none",
-                        color: prevH ? "#55ccff" : "#64748b",
+                        ...IS(T), cursor:"pointer", userSelect:"none",
+                        color: prevH ? T.inputVal : "#64748b",
                         fontWeight:700, fontSize:20,
                         display:"flex", alignItems:"center", justifyContent:"center",
                         padding:"10px 14px",
@@ -18222,7 +18484,7 @@ function App() {
                   )
                   /* 今年度 */
                   , React.createElement('div', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 900}}
-                    , React.createElement('div', { style: { fontSize:11, color:"#94a3b8", marginBottom:3, display:"flex", alignItems:"center", justifyContent:"space-between", paddingRight:"14px" }}
+                    , React.createElement('div', { style: { fontSize:11, color:T.fld_label, marginBottom:3, display:"flex", alignItems:"center", justifyContent:"space-between", paddingRight:"14px" }}
                       , React.createElement('span', null, "今年度")
                       , React.createElement('span', { onClick: e=>{ e.stopPropagation(); setInfoPopup({title:"今年度 年休所得時間", desc:"今年度に新たに付与された年休の時間を入力して下さい。前年度分を使い切った後にこちらが消費されます。"}); }, style:{ fontSize:12, cursor:"pointer", opacity:0.8 }}, "ℹ️")
                     )
@@ -18232,8 +18494,8 @@ function App() {
                           initM:c!==null?c%60:0,
                           onConfirm:(h,m)=>{ setCurrH(`${h}:${String(m).padStart(2,"0")}`); closePad(); },
                         }); }, style: {
-                        ...IS, cursor:"pointer", userSelect:"none",
-                        color: currH ? "#55ccff" : "#64748b",
+                        ...IS(T), cursor:"pointer", userSelect:"none",
+                        color: currH ? T.inputVal : "#64748b",
                         fontWeight:700, fontSize:20,
                         display:"flex", alignItems:"center", justifyContent:"center",
                         padding:"10px 14px",
@@ -18248,13 +18510,13 @@ function App() {
 
               /* 1日の所定労働時間 */
               , React.createElement('div', { style: {
-                background:"rgba(255,255,255,0.05)", border:"1px solid rgba(255,255,255,0.08)",
+                background:T.card_bg, border:T.card_border2,
                 borderRadius:12, padding:12, width:120,
                 display:"flex", flexDirection:"column", alignSelf:"stretch",
               }}
-                , React.createElement('div', { style: { fontSize:13, color:"#cbd5e1", marginBottom:8, whiteSpace:"nowrap" }}, "所定労働時間")
+                , React.createElement('div', { style: { fontSize:13, color:T.card_label, marginBottom:8, whiteSpace:"nowrap" }}, "所定労働時間")
                 , React.createElement('div', { style: { flex:1, display:"flex", flexDirection:"column", justifyContent:"flex-end" }}
-                  , React.createElement('div', { style: { fontSize:11, color:"#94a3b8", marginBottom:3, display:"flex", alignItems:"center", justifyContent:"space-between", paddingRight:"14px" }}
+                  , React.createElement('div', { style: { fontSize:11, color:T.fld_label, marginBottom:3, display:"flex", alignItems:"center", justifyContent:"space-between", paddingRight:"14px" }}
                     , React.createElement('span', null, "時間")
                     , React.createElement('span', { onClick: e=>{ e.stopPropagation(); setInfoPopup({title:"所定労働時間", desc:"1日の勤務時間を設定します。タップすると時間を入力できます。早見表の基準時間・判定時間はこの値から自動計算されます。"}); }, style:{ fontSize:12, cursor:"pointer", opacity:0.8 }}, "ℹ️")
                   )
@@ -18263,8 +18525,8 @@ function App() {
                     initH:Math.floor(wpd/60), initM:wpd%60,
                     onConfirm:(h,m)=>{ setWpd(h*60+m||1); closePad(); },
                   }); }, style: {
-                    ...IS, cursor:"pointer", userSelect:"none",
-                    color:"#55ccff", fontWeight:700, fontSize:20,
+                    ...IS(T), cursor:"pointer", userSelect:"none",
+                    color:T.inputVal, fontWeight:700, fontSize:20,
                     background:"rgba(0,170,255,0.18)", border:"1px solid rgba(0,170,255,0.95)",
                     display:"flex", alignItems:"center", justifyContent:"center",
                     padding:"10px 14px",
@@ -18280,11 +18542,11 @@ function App() {
 
               /* 消費時間 */
               , React.createElement('div', { style: {
-                background:"rgba(255,255,255,0.05)", border:"1px solid rgba(255,255,255,0.08)",
+                background:T.card_bg, border:T.card_border2,
                 borderRadius:12, padding:"12px 8px",
                 display:"flex", flexDirection:"column", alignItems:"center",
               }}
-                , React.createElement('div', { style: { fontSize:12, color:"#cbd5e1", marginBottom:8 }}, "消費時間")
+                , React.createElement('div', { style: { fontSize:12, color:T.card_label, marginBottom:8 }}, "消費時間")
                 , React.createElement('div', { style: { flex:1, display:"flex", alignItems:"center", justifyContent:"center" }}
                   , React.createElement('span', { style: { fontSize:22, fontWeight:700, color:"#00c853", lineHeight:1 }}
                     , mmHHMM(usedMin)
@@ -18295,11 +18557,11 @@ function App() {
 
               /* 年休残時間（バッジを時間の下に横書き） */
               , React.createElement('div', { style: {
-                background:"rgba(255,255,255,0.05)", border:"1px solid rgba(255,255,255,0.08)",
+                background:T.card_bg, border:T.card_border2,
                 borderRadius:12, padding:"12px 8px",
                 display:"flex", flexDirection:"column", alignItems:"center",
               }}
-                , React.createElement('div', { style: { fontSize:12, color:"#cbd5e1", marginBottom:8 }}, "年休残時間")
+                , React.createElement('div', { style: { fontSize:12, color:T.card_label2, marginBottom:8 }}, "年休残時間")
                 , React.createElement('div', { style: { flex:1, display:"flex", alignItems:"center", justifyContent:"center" }}
                   , React.createElement('span', { style: { fontSize:22, fontWeight:700, color:"#00c853", lineHeight:1 }}
                     , mmHHMM(remMin)
@@ -18308,18 +18570,18 @@ function App() {
                 , React.createElement('div', { style: {
                   marginTop:6, fontSize:12, fontWeight:700,
                   padding:"2px 8px", borderRadius:10,
-                  background: prevRem>=0 ? "rgba(99,102,241,0.25)" : "rgba(52,211,153,0.2)",
-                  color:       prevRem>=0 ? "#a5b4fc"               : "#34d399",
+                  background: prevRem>=0 ? "rgba(99,102,241,0.25)" : (isDark?"rgba(52,211,153,0.2)":"rgba(52,211,153,0.28)"),
+                  color:       prevRem>=0 ? T.badgePurple           : (isDark?"#34d399":"#047857"),
                 }}, prevRem>=0 ? "前年度" : "今年度")
               )
 
               /* 残日数 */
               , React.createElement('div', { style: {
-                background:"rgba(255,255,255,0.05)", border:"1px solid rgba(255,255,255,0.08)",
+                background:T.card_bg, border:T.card_border2,
                 borderRadius:12, padding:"12px 8px",
                 display:"flex", flexDirection:"column", alignItems:"center",
               }}
-                , React.createElement('div', { style: { fontSize:12, color:"#cbd5e1", marginBottom:8 }}, "残日数")
+                , React.createElement('div', { style: { fontSize:12, color:T.card_label, marginBottom:8 }}, "残時間日数換算")
                 , React.createElement('div', { style: { flex:1, display:"flex", alignItems:"center", justifyContent:"center", gap:3 }}
                   , React.createElement('span', { style: { fontSize:22, fontWeight:700, color:"#00c853", lineHeight:1 }}
                     , remWhole, "日"
@@ -18335,58 +18597,58 @@ function App() {
 
             /* 日数判定・切り替わり */
             , React.createElement('div', { style: {
-              background:"rgba(255,255,255,0.05)", border:"1px solid rgba(255,255,255,0.08)",
+              background:T.card_bg, border:T.card_border2,
               borderRadius:12, padding:14, display:"grid", gridTemplateColumns:"1fr 1fr", gap:10,
             }}
               , React.createElement('div', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 1002}}
-                , React.createElement('div', { style: { fontSize:13, color:"#cbd5e1", marginBottom:4 }}, "日数判定")
+                , React.createElement('div', { style: { fontSize:13, color:T.card_label, marginBottom:4 }}, "日数判定")
                 , React.createElement('div', { style: { fontSize:26, fontWeight:700, color:"#ff69b4" }}
                   , dayJudge, React.createElement('span', { style: { fontSize:13, marginLeft:3 }}, "日")
                 )
-                , React.createElement('div', { style: { fontSize:12, color:"#64748b", marginTop:2 }}, "端数 "
+                , React.createElement('div', { style: { fontSize:12, color:T.fld_label, marginTop:2 }}, "端数 "
                    , mmHHMM(remSub), " " , remSub<=halfWpd?"≤半日→切捨":">半日→切上"
                 )
               )
               , React.createElement('div', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 1011}}
-                , React.createElement('div', { style: { fontSize:13, color:"#cbd5e1", marginBottom:4 }}, dayJudge===0 ? (prevRem>=0 ? "前年度分使い切りまでの時間" : "今年度分使い切りまでの時間") : (dayJudge-1)+"日に切り替わるまでの時間")
+                , React.createElement('div', { style: { fontSize:13, color:T.card_label, marginBottom:4 }}, dayJudge===0 ? (prevRem>=0 ? "前年度分使い切りまでの時間" : "今年度分使い切りまでの時間") : (dayJudge-1)+"日に切替までの時間")
                 , React.createElement('div', { style: { fontSize:26, fontWeight:700, color:"#00c853" }}
                   , mmHHMM(dayJudge===0 ? activeMin : switchMin)
                 )
-                , React.createElement('div', { style: { fontSize:12, color:"#64748b", marginTop:2 }}
+                , React.createElement('div', { style: { fontSize:12, color:T.fld_label, marginTop:2 }}
                   , dayJudge===0 ? "年休残時間と同じ値" : remSub>halfWpd?"端数 − 半日":"端数 + 半日"
                 )
               )
             )
 
             /* 目標日数 */
-            , React.createElement('div', { style: { background:"rgba(255,255,255,0.05)", border:"1px solid rgba(255,255,255,0.08)", borderRadius:12, padding:14 }}
-              , React.createElement('div', { style: { fontSize:13, color:"#cbd5e1", marginBottom:10 }}, "目標残日数設定")
+            , React.createElement('div', { style: { background:T.card_bg, border:T.card_border2, borderRadius:12, padding:14 }}
+              , React.createElement('div', { style: { fontSize:13, color:T.card_label, marginBottom:10 }}, "目標残日数設定")
               , React.createElement('div', { style: { display:"flex", alignItems:"center", justifyContent:"center", gap:19 }}
                 , React.createElement('button', { className: (!pulseOff.tDays) ? 'ob-pulse' : '', onClick: ()=>{ vibe(50); setPulseOff(p=>({...p,tDays:true})); setTDays(d=>Math.max(0,d-1)); }, style: {
-                  width:38,height:38, background:"rgba(255,255,255,0.1)", border:"1px solid rgba(255,255,255,0.4)",
-                  borderRadius:8, color:"#e2e8f0", fontSize:20, cursor:"pointer" }}, "−")
-                , React.createElement('div', { className: (!pulseOff.tDays) ? 'ob-pulse' : '', style: { textAlign:"center", fontSize:28, fontWeight:700, color:"#55ccff", background:"rgba(0,170,255,0.18)", border:"1px solid rgba(0,170,255,0.95)", borderRadius:8, padding:"4px 16px" }}
+                  width:38,height:38, background:T.goal_btnBg, border:T.goal_btnBorder,
+                  borderRadius:8, color:T.goal_btnColor, fontSize:20, cursor:"pointer" }}, "−")
+                , React.createElement('div', { className: (!pulseOff.tDays) ? 'ob-pulse' : '', style: { textAlign:"center", fontSize:28, fontWeight:700, color:T.inputVal, background:"rgba(0,170,255,0.18)", border:"1px solid rgba(0,170,255,0.95)", borderRadius:8, padding:"4px 16px" }}
                   , tDays, " " , React.createElement('span', { style: { fontSize:14 }}, "日")
                 )
                 , React.createElement('button', { className: (!pulseOff.tDays) ? 'ob-pulse' : '', onClick: ()=>{ vibe(50); setPulseOff(p=>({...p,tDays:true})); setTDays(d=>Math.min(20,d+1)); }, style: {
-                  width:38,height:38, background:"rgba(255,255,255,0.1)", border:"1px solid rgba(255,255,255,0.4)",
-                  borderRadius:8, color:"#e2e8f0", fontSize:20, cursor:"pointer" }}, "＋")
+                  width:38,height:38, background:T.goal_btnBg, border:T.goal_btnBorder,
+                  borderRadius:8, color:T.goal_btnColor, fontSize:20, cursor:"pointer" }}, "＋")
               )
               , hd && (
                 React.createElement('div', { style: { marginTop:12, display:"grid", gridTemplateColumns:"1fr 1fr", gap:8 }}
-                  , React.createElement('div', { style: { background:"rgba(255,255,255,0.05)", border:`1px solid ${vsTgt>=0?"rgba(255,255,255,0.08)":"rgba(248,113,113,0.6)"}`, borderRadius:12, padding:"8px 10px" }}
-                    , React.createElement('div', { style: { fontSize:13, color:"#cbd5e1" }}, "基準時間との差")
+                  , React.createElement('div', { style: { background:T.card_bg, border:"1px solid "+(vsTgt>=0?T.goal_diffBorder_ok:"rgba(248,113,113,0.6)"), borderRadius:12, padding:"8px 10px" }}
+                    , React.createElement('div', { style: { fontSize:13, color:T.goal_diffLabel }}, "基準時間との差")
                     , React.createElement('div', { style: { fontSize:22, fontWeight:700, color:"#00c853" }}
                       , vsTgt>=0?"+":"-", mmHHMM(Math.abs(vsTgt))
                     )
-                    , React.createElement('div', { style: { fontSize:12, color:"#64748b" }}, "基準: " , mmHHMM(tRemMin))
+                    , React.createElement('div', { style: { fontSize:12, color:T.hay_baseLabel }}, "基準: " , mmHHMM(tRemMin))
                   )
-                  , React.createElement('div', { style: { background:"rgba(255,255,255,0.05)", border:`1px solid ${vsMax>=0?"rgba(255,255,255,0.08)":"rgba(248,113,113,0.6)"}`, borderRadius:12, padding:"8px 10px" }}
-                    , React.createElement('div', { style: { fontSize:13, color:"#cbd5e1" }}, "最大ここまで休める！")
+                  , React.createElement('div', { style: { background:T.card_bg, border:"1px solid "+(vsMax>=0?T.goal_diffBorder_ok:"rgba(248,113,113,0.6)"), borderRadius:12, padding:"8px 10px" }}
+                    , React.createElement('div', { style: { fontSize:13, color:T.goal_diffLabel }}, "最大ここまで休める！")
                     , React.createElement('div', { style: { fontSize:22, fontWeight:700, color:"#ff69b4" }}
                       , vsMax>=0?"+":"-", mmHHMM(Math.abs(vsMax))
                     )
-                    , React.createElement('div', { style: { fontSize:12, color:"#64748b" }}, "日数判定: " , mmHHMM(tMaxMin))
+                    , React.createElement('div', { style: { fontSize:12, color:T.hay_judgeLabel }}, "日数判定: " , mmHHMM(tMaxMin))
                   )
                 )
               )
@@ -18398,7 +18660,7 @@ function App() {
               borderLeft:"3px solid #fb923c", borderRadius:10, padding:"10px 12px",
             }}
               , React.createElement('div', { style: { fontSize:11, fontWeight:700, color:"#fb923c", marginBottom:4 }}, "⚠ 注意事項" )
-              , React.createElement('p', { style: { fontSize:11, color:"#94a3b8", lineHeight:1.8, margin:0 }}
+              , React.createElement('p', { style: { fontSize:11, color:T.fld_label, lineHeight:1.8, margin:0 }}
                 , "このアプリは、年休消費に関する各時間の計算をシミュレーションしています。実際の時間と誤差が生じる場合がありますので、職場で公表されている時間を確認の上、あくまで参考としてお使いいただき、"
                 , React.createElement('span', { style: { color:"#f87171", fontWeight:700 }}, "自己責任")
                 , "のもとでご活用ください。"
@@ -18427,29 +18689,29 @@ function App() {
 
             /* 新規追加フォーム */
             , showAdd && (
-              React.createElement('div', { style: { background:"rgba(99,102,241,0.08)", border:"1px solid rgba(99,102,241,0.3)",
+              React.createElement('div', { style: { background:T.ne_bg, border:T.ne_border,
                 borderRadius:12, padding:14, display:"flex", flexDirection:"column", gap:10 }}
-                , React.createElement('div', { style: { fontSize:13, fontWeight:600, color:"#a5b4fc" }}, "新規追加")
+                , React.createElement('div', { style: { fontSize:13, fontWeight:600, color:T.ne_title }}, "新規追加")
 
                 , React.createElement('div', { style: { display:"grid", gridTemplateColumns:"1fr 60px", gap:8 }}
                   , React.createElement('div', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 1116}}
-                    , React.createElement('div', { style: { fontSize:11, color:"#94a3b8", marginBottom:3 }}, "使用日")
+                    , React.createElement('div', { style: { fontSize:11, color:T.ne_label, marginBottom:3 }}, "使用日")
                     , React.createElement('div', { style: { position:"relative" }}
                       , React.createElement('input', { type: "date", value: ne.date,
                         onChange: e=>setNe(p=>({...p,date:e.target.value,dow:fillDow(e.target.value)})),
-                        style: { ...IS, color: ne.date ? "#e2e8f0" : "transparent", caretColor:"#e2e8f0" }})
+                        style: { ...IS(T), color: ne.date ? T.IS_color : "transparent", caretColor:T.IS_color }})
                       , !ne.date && React.createElement('div', {
                           style: {
                             position:"absolute", top:0, left:0, right:0, bottom:0,
                             display:"flex", alignItems:"center", paddingLeft:10,
-                            fontSize:14, color:"#64748b", pointerEvents:"none",
+                            fontSize:14, color:T.fld_label, pointerEvents:"none",
                           }
                         }, "タップして入力")
                     )
                   )
                   , React.createElement('div', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 1122}}
-                    , React.createElement('div', { style: { fontSize:11, color:"#94a3b8", marginBottom:3 }}, "曜日")
-                    , React.createElement('div', { style: { ...IS, textAlign:"center", color:ne.date?dowBadge(ne.date,holidays).c:"#94a3b8",
+                    , React.createElement('div', { style: { fontSize:11, color:T.ne_label, marginBottom:3 }}, "曜日")
+                    , React.createElement('div', { style: { ...IS(T), textAlign:"center", color:ne.date?dowBadge(ne.date, holidays, T).c:"#94a3b8",
                       fontWeight:700, display:"flex", alignItems:"center", justifyContent:"center" }}
                       , ne.dow||"−"
                     )
@@ -18458,19 +18720,19 @@ function App() {
 
                 , React.createElement('div', { style: { display:"grid", gridTemplateColumns:"1fr 1fr", gap:8 }}
                   , React.createElement('div', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 1132}}
-                    , React.createElement('div', { style: { fontSize:11, color:"#94a3b8", marginBottom:3 }}, "ダイヤ")
-                    , React.createElement('select', { value: ne.diamond, onChange: e=>setNe(p=>({...p,diamond:e.target.value})), style: IS}
+                    , React.createElement('div', { style: { fontSize:11, color:T.ne_label, marginBottom:3 }}, "ダイヤ")
+                    , React.createElement('select', { value: ne.diamond, onChange: e=>setNe(p=>({...p,diamond:e.target.value})), style: IS(T)}
                       , DTYPES.map(d=>React.createElement('option', { key: d}, d))
                     )
                   )
-                  , React.createElement(NumpadField, { label: "番号", value: ne.diamondNo, placeholder: "タップして入力",
+                  , React.createElement(NumpadField, { T:T, label: "番号", value: ne.diamondNo, placeholder: "タップして入力",
                     onTap: ()=>openPad({
                       title:"番号を入力", mode:"num", initNum:ne.diamondNo,
                       onConfirm:v=>{ setNe(p=>({...p,diamondNo:v===0?"":String(v)})); closePad(); },
                     })})
                 )
 
-                , React.createElement(NumpadField, { label: "労働時間", value: ne.workTime, placeholder: "タップして入力",
+                , React.createElement(NumpadField, { T:T, label: "労働時間", value: ne.workTime, placeholder: "タップして入力",
                   onTap: ()=>{
                     const c=parseHM(ne.workTime);
                     openPad({
@@ -18496,25 +18758,16 @@ function App() {
                     });
                   }})
 
-                /* 労働時間クリアボタン */
-                , ne.workTime && (
-                  React.createElement('button', { onClick: ()=>{ vibe(50); setNe(p=>({...p,workTime:""})); }, style: {
-                    background:"rgba(255,255,255,0.05)", border:"1px solid rgba(255,255,255,0.1)",
-                    borderRadius:6, padding:"5px", color:"#64748b", fontSize:11, cursor:"pointer" }}, "労働時間をクリア"
-
-                  )
-                )
-
                 /* 前年度→今年度移行確認ダイアログ */
                 , showSwitchConfirm && (
                   React.createElement('div', { style: {
-                    background:"rgba(99,102,241,0.13)", border:"1.5px solid rgba(99,102,241,0.5)",
+                    background:T.warn_bg, border:T.warn_border,
                     borderRadius:12, padding:"14px 14px 12px", display:"flex", flexDirection:"column", gap:10,
                   }}
-                    , React.createElement('div', { style: { fontSize:13, color:"#e2e8f0", lineHeight:1.7 }}, "⚠ 前年度分が不足になります。"
+                    , React.createElement('div', { style: { fontSize:13, color:T.warn_text, lineHeight:1.7 }}, "⚠ 前年度分が不足になります。"
                        , React.createElement('br', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 1187}}), "今年度分に移行しますか。"
                     )
-                    , React.createElement('div', { style: { fontSize:11, color:"#94a3b8" }}, "入力時間："
+                    , React.createElement('div', { style: { fontSize:11, color:T.warn_sub }}, "入力時間："
                       , pendingWorkTime, "　前年度残：", mmHHMM(prevRem)
                     )
                     , React.createElement('div', { style: { display:"grid", gridTemplateColumns:"1fr 1fr", gap:8 }}
@@ -18563,8 +18816,8 @@ function App() {
                         )
                       )
                       , React.createElement('button', { onClick: ()=>{ if(!(noFields||willMinus||overWork||showSwitchConfirm)) vibe(50); addEntry(); }, disabled: noFields || willMinus || overWork || showSwitchConfirm, style: {
-                        background: (noFields||willMinus||overWork||showSwitchConfirm) ? "rgba(255,255,255,0.1)" : "linear-gradient(135deg,#6366f1,#8b5cf6)",
-                        border:"none", borderRadius:8, padding:"11px", color: (noFields||willMinus||overWork||showSwitchConfirm) ? "#475569" : "#fff",
+                        background: (noFields||willMinus||overWork||showSwitchConfirm) ? T.ne_cancelBg : T.addBtnBg,
+                        border:(noFields||willMinus||overWork||showSwitchConfirm) ? T.ne_cancelBorder : "none", borderRadius:8, padding:"11px", color: (noFields||willMinus||overWork||showSwitchConfirm) ? T.ne_cancelColor : "#fff",
                         fontSize:14, fontWeight:600, cursor:(noFields||willMinus||overWork||showSwitchConfirm)?"not-allowed":"pointer" }}, "追加する")
                     )
                   );
@@ -18572,7 +18825,7 @@ function App() {
               )
             )
 
-            , React.createElement('div', { style: { fontSize:12, color:"#64748b", padding:"0 2px", display:"flex", alignItems:"center", gap:8 }}
+            , React.createElement('div', { style: { fontSize:12, color:T.fld_label, padding:"0 2px", display:"flex", alignItems:"center", gap:8 }}
               , React.createElement('span', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 1246}}, "使用件数: " , entries.length, "件 / 合計: "   , mmHHMM(usedMin))
               , hd && (
                 dayJudge >= tDays
@@ -18582,29 +18835,29 @@ function App() {
             )
 
             , entries.map(e=>{
-              const badge=dowBadge(e.date, holidays);
+              const badge=dowBadge(e.date, holidays, T);
               const isEd=editId===e.id;
               return (
                 React.createElement('div', { key: e.id, style: {
-                  background:"rgba(255,255,255,0.04)", border:"1px solid rgba(255,255,255,0.08)",
+                  background:T.ne_bg, border:T.ne_border,
                   borderRadius:12, padding:12,
                 }}
                   , React.createElement('div', { style: { display:"flex", justifyContent:"space-between", alignItems:"flex-start" }}
                     , React.createElement('div', { style: { flex:1 }}
                       , React.createElement('div', { style: { display:"flex", alignItems:"center", gap:8, marginBottom:6 }}
-                        , React.createElement('span', { style: { fontSize:17, fontWeight:600, color:"#e2e8f0" }}, e.date)
+                        , React.createElement('span', { style: { fontSize:17, fontWeight:600, color:T.re_dateColor }}, e.date)
                         , React.createElement('span', { style: { fontSize:14, background:badge.bg, color:badge.c,
                           padding:"2px 7px", borderRadius:20, fontWeight:700 }}, e.dow)
                       )
                       , React.createElement('div', { style: { display:"flex", gap:8, flexWrap:"wrap" }}
-                        , React.createElement('span', { style: { fontSize:14, background:"rgba(139,92,246,0.15)", color:"#c4b5fd", padding:"2px 8px", borderRadius:6 }}, "ダイヤ "
+                        , React.createElement('span', { style: { fontSize:14, background:"rgba(139,92,246,0.15)", color:T.re_diaColor, padding:"2px 8px", borderRadius:6 }}, "ダイヤ "
                            , e.diamond)
-                        , e.diamondNo && React.createElement('span', { style: { fontSize:14, background:"rgba(255,255,255,0.08)", color:"#94a3b8", padding:"2px 8px", borderRadius:6 }}, "No."
+                        , e.diamondNo && React.createElement('span', { style: { fontSize:14, background:T.re_noBg, color:T.re_noColor, padding:"2px 8px", borderRadius:6 }}, "No."
                           , e.diamondNo)
                         , React.createElement('span', { style: {
                           fontSize:14, padding:"2px 8px", borderRadius:6,
                           background:e.workTime?"rgba(52,211,153,0.1)":"rgba(255,255,255,0.05)",
-                          color:e.workTime?"#34d399":"#64748b",
+                          color:e.workTime?T.re_workColor_fill:T.re_workColor_empty,
                         }}, "⏱ " , e.workTime||`${mmHHMM(wpd)}（1日）`)
                       )
                     )
@@ -18613,27 +18866,27 @@ function App() {
                         , React.createElement('button', { onClick: ()=>{ vibe(50); setEditId(isEd?null:e.id); }, style: {
                           background:isEd?"rgba(99,102,241,0.3)":"rgba(99,102,241,0.1)",
                           border:`1px solid ${isEd?"rgba(99,102,241,0.6)":"rgba(99,102,241,0.25)"}`,
-                          borderRadius:8, color:"#a5b4fc", width:32, height:32, cursor:"pointer", fontSize:14 }}, "✏")
+                          borderRadius:8, color:T.re_editColor, width:32, height:32, cursor:"pointer", fontSize:14 }}, "✏")
                         , React.createElement('button', { onClick: ()=>{ vibe(50); setDeleteConfirmId(e.id); }, style: {
                           background:"rgba(248,113,113,0.1)", border:"1px solid rgba(248,113,113,0.2)",
-                          borderRadius:8, color:"#f87171", width:32, height:32, cursor:"pointer", fontSize:14 }}, "✕")
+                          borderRadius:8, color:"#f87171", width:32, height:32, cursor:"pointer", fontSize:14 }}, "🗑")
                       )
                       , React.createElement('button', { onClick: ()=>{ vibe(50); setEntries(p=>p.map(x=>x.id===e.id?{...x,submitted:!x.submitted}:x)); }, style: {
-                        background: e.submitted?"rgba(52,211,153,0.15)":"rgba(248,113,113,0.12)",
-                        border: `1px solid ${e.submitted?"rgba(52,211,153,0.4)":"rgba(248,113,113,0.35)"}`,
-                        borderRadius:8, color: e.submitted?"#34d399":"#f87171",
+                        background: e.submitted?(isDark?"rgba(52,211,153,0.15)":"rgba(52,211,153,0.28)"):"rgba(248,113,113,0.12)",
+                        border: "1px solid "+(e.submitted?(isDark?"rgba(52,211,153,0.4)":"rgba(52,211,153,0.75)"):"rgba(248,113,113,0.35)"),
+                        borderRadius:8, color: e.submitted?(isDark?"#34d399":"#047857"):"#f87171",
                         fontSize:11, fontWeight:700, cursor:"pointer",
                         padding:"3px 6px", whiteSpace:"nowrap",
                       }}, e.submitted?"届出済":"未提出")
                     )
                   )
-                  , isEd && React.createElement(EditForm, { entry: e, workPerDay: wpd, holidays: holidays, onSave: saveEdit, onCancel: ()=>setEditId(null)})
+                  , isEd && React.createElement(EditForm, { T:T, entry: e, workPerDay: wpd, holidays: holidays, onSave: saveEdit, onCancel: ()=>setEditId(null)})
                 )
               );
             })
 
             , entries.length===0 && (
-              React.createElement('div', { style: { textAlign:"center", padding:"40px 20px", color:"#475569", fontSize:14 }}, "使用記録がありません。"
+              React.createElement('div', { style: { textAlign:"center", padding:"40px 20px", color:T.re_emptyColor, fontSize:14 }}, "使用記録がありません。"
                 , React.createElement('br', null)
                 , "年休使用日の追加を押して入力して下さい。"
 
@@ -18648,18 +18901,18 @@ function App() {
             /* 現在の年度インジケーター */
             , React.createElement('div', { style: {
               display:"flex", alignItems:"center", justifyContent:"space-between",
-              background: prevRem>=0 ? "rgba(99,102,241,0.1)" : "rgba(52,211,153,0.1)",
-              border: `1px solid ${prevRem>=0 ? "rgba(99,102,241,0.35)" : "rgba(52,211,153,0.35)"}`,
+              background: prevRem>=0 ? T.hay_prevBg : "rgba(52,211,153,0.1)",
+              border: "1px solid "+(prevRem>=0 ? T.hay_prevBorder : "rgba(52,211,153,0.35)"),
               borderRadius:10, padding:"7px 12px",
             }}
               , React.createElement('div', { style: { display:"flex", alignItems:"center", gap:8 }}
                 , React.createElement('span', { style: {
                   fontSize:10, fontWeight:700, padding:"2px 8px", borderRadius:10,
-                  background: prevRem>=0 ? "rgba(99,102,241,0.3)" : "rgba(52,211,153,0.25)",
-                  color: prevRem>=0 ? "#a5b4fc" : "#34d399",
+                  background: prevRem>=0 ? T.hay_badgeBg : (isDark?"rgba(52,211,153,0.25)":"rgba(52,211,153,0.28)"),
+                  color: prevRem>=0 ? T.hay_badgeColor : (isDark?"#34d399":"#047857"),
                 }}, prevRem>=0 ? "前年度消費中" : "今年度消費中")
-                , React.createElement('span', { style: { fontSize:11, color:"#94a3b8" }}, "年休残")
-                , React.createElement('span', { style: { fontSize:13, fontWeight:700, color: prevRem>=0 ? "#a5b4fc" : "#34d399" }}
+                , React.createElement('span', { style: { fontSize:11, color:T.hay_remLabel }}, "年休残")
+                , React.createElement('span', { style: { fontSize:13, fontWeight:700, color: prevRem>=0 ? T.hay_remColor_normal : (isDark?"#34d399":"#047857") }}
                   , mmHHMM(remMin)
                 )
               )
@@ -18673,19 +18926,19 @@ function App() {
             , React.createElement('div', { style: { display:"flex", gap:12, flexWrap:"wrap", fontSize:11 }}
               , React.createElement('span', { style: { display:"flex", alignItems:"center", gap:4 }}
                 , React.createElement('span', { style: { width:10,height:10,borderRadius:3,background:"#34d399",display:"inline-block" }})
-                , React.createElement('span', { style: { color:"#94a3b8" }}, "目標")
+                , React.createElement('span', { style: { color:T.hay_tgtColor }}, "目標")
               )
               , React.createElement('span', { style: { display:"flex", alignItems:"center", gap:4 }}
                 , React.createElement('span', { style: { width:10,height:10,borderRadius:3,background:"#60a5fa",display:"inline-block" }})
-                , React.createElement('span', { style: { color:"#94a3b8" }}, "判定（目標圏内）")
+                , React.createElement('span', { style: { color:T.hay_judgeColor }}, "判定（目標圏内）")
               )
               , React.createElement('span', { style: { display:"flex", alignItems:"center", gap:4 }}
                 , React.createElement('span', { style: { width:10,height:10,borderRadius:3,background:"#f472b6",display:"inline-block" }})
-                , React.createElement('span', { style: { color:"#94a3b8" }}, "判定（目標超過）")
+                , React.createElement('span', { style: { color:T.hay_judgeColor }}, "判定（目標超過）")
               )
               , React.createElement('span', { style: { display:"flex", alignItems:"center", gap:4 }}
                 , React.createElement('span', { style: { width:10,height:10,borderRadius:3,background:"#fbbf24",display:"inline-block" }})
-                , React.createElement('span', { style: { color:"#94a3b8" }}, "目標=判定")
+                , React.createElement('span', { style: { color:T.hay_judgeColor }}, "目標=判定")
               )
             )
 
@@ -18725,12 +18978,12 @@ function App() {
                 const bg     = isBoth? "rgba(250,204,21,0.13)"
                              : isT   ? "rgba(52,211,153,0.12)"
                              : isJ   ? judgeBg
-                             : "rgba(255,255,255,0.03)";
+                             : T.hay_rowBg_normal;
                 const borderColor = isBoth? "#fbbf24"
                              : isT   ? "#34d399"
                              : isJ   ? judgeColor
-                             : "rgba(255,255,255,0.09)";
-                const dc     = isBoth? "#fbbf24" : isT? "#34d399" : isJ? judgeColor : "#cbd5e1";
+                             : T.hay_rowBorder_normal;
+                const dc     = isBoth? "#fbbf24" : isT? "#34d399" : isJ? judgeColor : T.hay_dc_default;
                 const valCol = isBoth? "#fbbf24" : isT? "#34d399" : isJ? judgeColor : null;
                 return (
                   React.createElement('div', { key: row.days, ref: isJ ? judgeRowRef : null, style: {
@@ -18755,16 +19008,16 @@ function App() {
                     )
                     /* 基準時間列 */
                     , React.createElement('div', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 1422}}
-                      , React.createElement('div', { style: { fontSize:10, color:"#94a3b8", marginBottom:2 }}, "基準時間")
+                      , React.createElement('div', { style: { fontSize:10, color:T.hay_baseLabel, marginBottom:2 }}, "基準時間")
                       , React.createElement('div', { style: { fontSize:14, fontWeight:600, color:_nullishCoalesce(valCol, () => ("#34d399")) }}
                         , mmHHMM(row.remainMin)
                       )
                     )
                     /* 日数判定時間列 */
                     , React.createElement('div', {__self: this, __source: {fileName: _jsxFileName, lineNumber: 1429}}
-                      , React.createElement('div', { style: { fontSize:10, color:"#94a3b8", marginBottom:2 }}, "日数判定時間")
+                      , React.createElement('div', { style: { fontSize:10, color:T.hay_judgeLabel, marginBottom:2 }}, "日数判定時間")
                       , React.createElement('div', { style: { fontSize:13, fontWeight:600, color:_nullishCoalesce(valCol, () => ("#60a5fa")) }}
-                        , mmHHMM(row.maxMin), React.createElement('span', { style: { color:"#64748b", margin:"0 3px" }}, "～"), mmHHMM(row.judgeMax)
+                        , mmHHMM(row.maxMin), React.createElement('span', { style: { color:T.fld_label, margin:"0 3px" }}, "～"), mmHHMM(row.judgeMax)
                       )
                     )
                   )
@@ -18786,17 +19039,17 @@ function App() {
               {
                 icon:"📱", title:"はじめに",
                 color:"#6366f1",
-                body:"このアプリは、年次有給休暇（年休）の残り時間を管理するツールです。\n使用した年休を記録するだけで、残日数・消費ペースを自動で計算します。\nデータはこの端末に自動保存されるので、次回開いたときもそのまま続きから使えます。\nタブは画面下のボタンをタップするか、左右にスワイプして切り替えられます。",
+                body:"このアプリは、年次有給休暇（年休）の残り時間を管理するツールです。\n使用した年休を記録するだけで、残時間日数換算・消費ペースを自動で計算します。\nデータはこの端末に自動保存されるので、次回開いたときもそのまま続きから使えます。\nタブは画面下のボタンをタップするか、左右にスワイプして切り替えられます。\n画面右上の ☀️ / 🌙 ボタンでライト・ダークテーマを切り替えられます。",
               },
               {
                 icon:"✨", title:"最初にやること",
-                color:"#55ccff",
-                body:"アプリを初めて開くと、4つの入力欄がぼんやり光ります。\n光っている欄を全部タップして数値を入力してください。\n全部タップし終わると、他のタブや機能が使えるようになります。\n（使い方タブはいつでも見られます）",
+                color:T.inputVal,
+                body:"アプリを初めて開くと、4つの入力欄がぼんやり光ります。\n光っている欄を全部タップして数値を入力してください。\n全部入力し終わると、他のタブや機能が使えるようになります。\n（使い方タブはいつでも見られます）",
                 items:[
                   {label:"前年度の年休所得時間", desc:"前の年度から持ち越した年休の所得時間を入力します。枠をタップするとテンキーが開きます。"},
                   {label:"今年度の年休所得時間", desc:"今年度に新しく付与された年休の所得時間を入力します。枠をタップするとテンキーが開きます。"},
                   {label:"1日の所定労働時間", desc:"1日の勤務時間を入力します。枠をタップするとテンキーが開きます。早見表の計算にも使われます。"},
-                  {label:"目標残日数", desc:"年休の更新日までに残しておきたい日数を − ・ ＋ で設定します。"},
+                  {label:"目標残日数", desc:"年休の更新日までに残しておきたい日数を − ・ ＋ ボタンで設定します。設定すると光りが消えます。"},
                 ],
               },
               {
@@ -18807,9 +19060,10 @@ function App() {
                   {label:"前年度・今年度の入力枠", desc:"現在消費中の年度の枠が明るく表示されます。年休は前年度分から先に消費され、使い切ると自動で今年度分に切り替わります。"},
                   {label:"消費時間", desc:"使用記録に登録した年休の合計時間です。"},
                   {label:"年休残時間", desc:"現在残っている年休の時間です。「前年度」または「今年度」のバッジでどちらを消費中か確認できます。"},
-                  {label:"残日数", desc:"残り時間をもとに、何日分の年休が残っているかを表示します。"},
+                  {label:"残時間日数換算", desc:"残り時間をもとに、何日分の年休が残っているかを表示します。"},
                   {label:"日数判定", desc:"残り時間から算出した、現在の年休残日数の判定値です。"},
-                  {label:"〇〇日に切り替わるまでの時間", desc:"あと何時間使うと残日数の判定が1日減るかを示します。消化ペースの目安にしてください。"},
+                  {label:"〇〇日に切替までの時間", desc:"あと何時間使うと残日数の判定が1日減るかを示します。消化ペースの目安にしてください。"},
+                  {label:"目標残日数設定", desc:"− ・ ＋ ボタンで目標残日数を変更できます。"},
                   {label:"基準時間との差", desc:"目標日数をキープするのに必要な時間と、現在の残り時間との差です。マイナスになると枠が赤く変わります。"},
                   {label:"最大ここまで休める！", desc:"現在の残り時間で最大何時間まで年休を取れるかの目安です。"},
                 ],
@@ -18819,13 +19073,15 @@ function App() {
                 color:"#06b6d4",
                 body:"「使用記録」タブで年休を使った日の記録を登録します。",
                 items:[
-                  {label:"＋ 年休使用日を追加", desc:"ボタンをタップすると入力欄が開きます。使用日・ダイヤ区分・番号・労働時間をすべて入力すると追加できます。"},
-                  {label:"使用日", desc:"タップするとカレンダーが開きます。日付を選ぶと曜日が自動で入ります。"},
-                  {label:"労働時間", desc:"その日に実際に働いた時間を入力します。上限は15時間00分です。"},
-                  {label:"前年度→今年度の移行確認", desc:"入力した時間によって前年度分が不足する場合、確認ダイアログが表示されます。「承諾」で今年度分への移行を確定、「拒否」で入力をやり直せます。"},
-                  {label:"届出済 / 未提出", desc:"年休届の提出状況を管理できます。タップするたびに切り替わります。"},
-                  {label:"✏ 編集 / ✕ 削除", desc:"登録済みの記録を修正・削除できます。✕ をタップすると確認ダイアログが表示されます。「削除する」で削除、「キャンセル」で取り消せます。"},
-                  {label:"🗑 全削除", desc:"すべての使用記録を一括削除します。タップすると「⚠ 全件削除しますか？」の確認が表示されます。「削除する」で全件削除、「キャンセル」で取り消せます。"},
+                  {label:"＋ 年休使用日を追加", desc:"ボタンをタップすると入力欄が開きます。使用日・番号・労働時間の3項目を入力すると「追加する」ボタンが押せるようになります。"},
+                  {label:"使用日", desc:"タップすると日付入力が開きます。日付を選ぶと曜日が自動で入ります。"},
+                  {label:"ダイヤ区分", desc:"A・B・C・D・WS・高速から選択します。"},
+                  {label:"番号", desc:"ダイヤの番号をテンキーで入力します。"},
+                  {label:"労働時間", desc:"その日に実際に働いた時間をテンキーで入力します。上限は15時間00分です。"},
+                  {label:"前年度→今年度の移行確認", desc:"入力により前年度分が不足する場合、確認ダイアログが表示されます。「承諾」で今年度分への自動移行を確定し、「拒否」で入力をやり直せます。"},
+                  {label:"届出済 / 未提出", desc:"年休届の提出状況を管理できます。タップするたびに切り替わります。届出済は緑色、未提出は赤色で表示されます。"},
+                  {label:"✏ 編集 / 🗑 削除", desc:"登録済みの記録を修正・削除できます。🗑 をタップすると確認ダイアログが表示されます。「削除する」で削除、「キャンセル」で取り消せます。"},
+                  {label:"🗑 全削除", desc:"すべての使用記録を一括削除します。タップすると確認ダイアログが表示されます。「削除する」で全件削除、「キャンセル」で取り消せます。"},
                 ],
               },
               {
@@ -18836,11 +19092,12 @@ function App() {
                   {label:"🎯 目標（緑枠）", desc:"設定した目標残日数の行です。"},
                   {label:"📍 判定（青 / ピンク枠）", desc:"現在の残り時間から算出した残日数の行です。目標以上なら青、目標を下回るとピンクで表示されます。"},
                   {label:"⭐ 目標＝判定（黄枠）", desc:"目標日数と判定日数が一致している状態です。"},
+                  {label:"基準時間・日数判定時間", desc:"各行の基準時間と日数判定時間が表示されます。現在の残り時間がどの範囲にあるかを確認できます。"},
                 ],
               },
               {
                 icon:"💾", title:"データの保存・移行",
-                color:"#64748b",
+                color:T.fld_label,
                 body:"入力内容はこの端末に自動保存されます。",
                 items:[
                   {label:"⬇ 出力", desc:"現在のデータをJSONファイルとして保存します。バックアップや機種変更のときに使ってください。"},
@@ -18850,7 +19107,7 @@ function App() {
               },
               {
                 icon:"🔔", title:"年休更新のお知らせ",
-                color:"#a5b4fc",
+                color:T.help_accentColor,
                 body:"毎年9月16日以降に初めてアプリを開くと、年休更新のお知らせが表示されます。\n表示されたら、年休所得時間の更新と使用記録の全削除を行い、新年度分を記入できるようにしてください。",
               },
               {
@@ -18864,7 +19121,7 @@ function App() {
               },
             ].map((sec,si)=>(
               React.createElement('div', { key: si, style: {
-                background:"rgba(255,255,255,0.03)",
+                background:T.help_sectionBg,
                 border:`1px solid ${sec.color}44`,
                 borderLeft:`3px solid ${sec.color}`,
                 borderRadius:12, padding:"12px 14px",
@@ -18874,14 +19131,14 @@ function App() {
                   , React.createElement('span', { style: { fontSize:14, fontWeight:700, color:sec.color }}, sec.title)
                 )
                 , sec.body && (
-                  React.createElement('p', { style: { fontSize:13, color:"#cbd5e1", lineHeight:1.7, margin:"0 0 8px", whiteSpace:"pre-wrap" }}, sec.body)
+                  React.createElement('p', { style: { fontSize:13, color:T.help_sectionColor, lineHeight:1.7, margin:"0 0 8px", whiteSpace:"pre-wrap" }}, sec.body)
                 )
                 , sec.items && (
                   React.createElement('div', { style: { display:"flex", flexDirection:"column", gap:8 }}
                     , sec.items.map((item,ii)=>(
                       React.createElement('div', { key: ii, style: { display:"flex", flexDirection:"column", gap:2 }}
-                        , React.createElement('span', { style: { fontSize:12, fontWeight:700, color:"#e2e8f0" }}, "▸ " , item.label)
-                        , React.createElement('span', { style: { fontSize:12, color:"#94a3b8", lineHeight:1.6, paddingLeft:10 }}, item.desc)
+                        , React.createElement('span', { style: { fontSize:12, fontWeight:700, color:T.help_listLabel }}, "▸ " , item.label)
+                        , React.createElement('span', { style: { fontSize:12, color:T.help_listDesc, lineHeight:1.6, paddingLeft:10 }}, item.desc)
                       )
                     ))
                   )
@@ -18900,11 +19157,11 @@ function App() {
         padding:"24px",
       }}
         , React.createElement('div', { style: {
-          background:"#1e293b", border:"1px solid rgba(99,102,241,0.4)",
+          background:T.modal_bg, border:T.modal_border,
           borderRadius:16, padding:"24px", maxWidth:300, width:"100%",
           boxShadow:"0 8px 40px rgba(0,0,0,0.6)",
         }}
-          , React.createElement('div', { style: { fontSize:15, fontWeight:700, color:"#ffffff", marginBottom:12, textAlign:"center" }}, "全件削除してもいいですか？")
+          , React.createElement('div', { style: { fontSize:15, fontWeight:700, color:T.modal_title, marginBottom:12, textAlign:"center" }}, "全件削除してもいいですか？")
           , React.createElement('div', { style: { display:"flex", gap:10, marginTop:8 }}
             , React.createElement('button', { onClick: ()=>{ vibe(50); setEntries(()=>[]); setClearOk(false); }, style: {
               flex:1, padding:"10px",
@@ -18913,8 +19170,8 @@ function App() {
             }}, "削除する")
             , React.createElement('button', { onClick: ()=>{ vibe(30); setClearOk(false); }, style: {
               flex:1, padding:"10px",
-              background:"rgba(99,102,241,0.15)", border:"1px solid rgba(99,102,241,0.4)",
-              borderRadius:10, color:"#a5b4fc", fontSize:14, fontWeight:600, cursor:"pointer",
+              background:T.modal_cancelBg, border:T.modal_cancelBorder,
+              borderRadius:10, color:T.modal_cancelColor, fontSize:14, fontWeight:600, cursor:"pointer",
             }}, "キャンセル")
           )
         )
@@ -18927,11 +19184,11 @@ function App() {
         padding:"24px",
       }}
         , React.createElement('div', { style: {
-          background:"#1e293b", border:"1px solid rgba(99,102,241,0.4)",
+          background:T.modal_bg, border:T.modal_border,
           borderRadius:16, padding:"24px", maxWidth:300, width:"100%",
           boxShadow:"0 8px 40px rgba(0,0,0,0.6)",
         }}
-          , React.createElement('div', { style: { fontSize:15, fontWeight:700, color:"#ffffff", marginBottom:12, textAlign:"center" }}, "削除してもいいですか？")
+          , React.createElement('div', { style: { fontSize:15, fontWeight:700, color:T.modal_title, marginBottom:12, textAlign:"center" }}, "削除してもいいですか？")
           , React.createElement('div', { style: { display:"flex", gap:10, marginTop:8 }}
             , React.createElement('button', { onClick: ()=>{ vibe(50); setEntries(p=>p.filter(x=>x.id!==deleteConfirmId)); setDeleteConfirmId(null); }, style: {
               flex:1, padding:"10px",
@@ -18940,8 +19197,8 @@ function App() {
             }}, "削除する")
             , React.createElement('button', { onClick: ()=>{ vibe(30); setDeleteConfirmId(null); }, style: {
               flex:1, padding:"10px",
-              background:"rgba(99,102,241,0.15)", border:"1px solid rgba(99,102,241,0.4)",
-              borderRadius:10, color:"#a5b4fc", fontSize:14, fontWeight:600, cursor:"pointer",
+              background:T.modal_cancelBg, border:T.modal_cancelBorder,
+              borderRadius:10, color:T.modal_cancelColor, fontSize:14, fontWeight:600, cursor:"pointer",
             }}, "キャンセル")
           )
         )
@@ -18954,15 +19211,15 @@ function App() {
         padding:"24px",
       }}
         , React.createElement('div', { onClick: e=>e.stopPropagation(), style: {
-          background:"#1e293b", border:"1px solid rgba(99,102,241,0.4)",
+          background:T.modal_bg, border:T.modal_border,
           borderRadius:16, padding:"24px", maxWidth:320, width:"100%",
         }}
-          , React.createElement('div', { style: { fontSize:15, fontWeight:700, color:"#a5b4fc", marginBottom:12 }}, infoPopup.title)
-          , React.createElement('div', { style: { fontSize:14, color:"#cbd5e1", lineHeight:1.7 }}, infoPopup.desc)
+          , React.createElement('div', { style: { fontSize:15, fontWeight:700, color:T.modal_infoTitle, marginBottom:12 }}, infoPopup.title)
+          , React.createElement('div', { style: { fontSize:14, color:T.modal_infoDesc, lineHeight:1.7 }}, infoPopup.desc)
           , React.createElement('button', { onClick: ()=>{ vibe(50); setInfoPopup(null); }, style: {
             marginTop:18, width:"100%", padding:"10px",
-            background:"rgba(99,102,241,0.2)", border:"1px solid rgba(99,102,241,0.4)",
-            borderRadius:8, color:"#a5b4fc", fontSize:14, fontWeight:600, cursor:"pointer",
+            background:T.modal_infoBtnBg, border:T.modal_infoBtnBorder,
+            borderRadius:8, color:T.modal_infoBtnColor, fontSize:14, fontWeight:600, cursor:"pointer",
           }}, "閉じる")
         )
       )
@@ -18984,26 +19241,26 @@ function App() {
         padding:"24px",
       }}
         , React.createElement('div', { style: {
-          background:"linear-gradient(135deg,#1e293b 0%,#0f172a 100%)",
-          border:"1.5px solid rgba(99,102,241,0.6)",
+          background:T.modal_onbBg,
+          border:T.modal_onbBorder,
           borderRadius:20, padding:"28px 24px 24px",
           maxWidth:380, width:"100%",
           boxShadow:"0 8px 40px rgba(0,0,0,0.7)",
         }}
           , React.createElement('div', { style: { display:"flex", alignItems:"center", gap:10, marginBottom:16 }}
             , React.createElement('span', { style: { fontSize:28 }}, "👋")
-            , React.createElement('span', { style: { fontSize:16, fontWeight:700, color:"#a5b4fc", letterSpacing:0.5 }}, "はじめまして！")
+            , React.createElement('span', { style: { fontSize:16, fontWeight:700, color:T.modal_onbTitle, letterSpacing:0.5 }}, "はじめまして！")
           )
           , React.createElement('p', { style: {
-            fontSize:15, color:"#e2e8f0", lineHeight:1.85,
+            fontSize:15, color:T.modal_onbText, lineHeight:1.85,
             margin:"0 0 8px", letterSpacing:0.3,
           }}, "まずはサマリー画面で基本時間を入力してください。")
           , React.createElement('p', { style: {
-            fontSize:13, color:"#94a3b8", lineHeight:1.7,
+            fontSize:13, color:T.modal_onbSub, lineHeight:1.7,
             margin:"0 0 8px",
           }}, "・前年度・今年度の年休所得時間" + "\n・1日の所定労働時間\n・目標残日数\n\nの入力欄がぼんやり光っています✨")
           , React.createElement('p', { style: {
-            fontSize:13, color:"#a5b4fc", lineHeight:1.7,
+            fontSize:13, color:T.modal_onbAccent, lineHeight:1.7,
             margin:"0 0 24px",
           }}, "わからないことは「使い方」を参照ください！")
           , React.createElement('div', { style: { display:"flex", justifyContent:"center" }}
@@ -19029,18 +19286,18 @@ function App() {
         padding:"24px",
       }}
         , React.createElement('div', { style: {
-          background:"linear-gradient(135deg,#1e293b 0%,#0f172a 100%)",
-          border:"1.5px solid rgba(99,102,241,0.7)",
+          background:T.modal_renewBg,
+          border:T.modal_renewBorder,
           borderRadius:20, padding:"28px 24px 24px",
           maxWidth:380, width:"100%",
           boxShadow:"0 8px 40px rgba(0,0,0,0.6)",
         }}
           , React.createElement('div', { style: { display:"flex", alignItems:"center", gap:10, marginBottom:16 }}
             , React.createElement('span', { style: { fontSize:28 }}, "🔄")
-            , React.createElement('span', { style: { fontSize:16, fontWeight:700, color:"#a5b4fc", letterSpacing:0.5 }}, "年休更新です")
+            , React.createElement('span', { style: { fontSize:16, fontWeight:700, color:T.modal_renewTitle, letterSpacing:0.5 }}, "年休更新です")
           )
           , React.createElement('p', { style: {
-            fontSize:15, color:"#e2e8f0", lineHeight:1.85,
+            fontSize:15, color:T.modal_renewText, lineHeight:1.85,
             margin:"0 0 24px", letterSpacing:0.3,
           }}, "年休所得時間の更新と使用記録の全削除を行ってください！")
           , React.createElement('div', { style: { display:"flex", justifyContent:"center" }}
@@ -19068,7 +19325,7 @@ function App() {
         padding:"24px",
       }}
         , React.createElement('div', { style: {
-          background:"linear-gradient(135deg,#1e293b 0%,#0f172a 100%)",
+          background:T.modal_noticeBg,
           border:"1.5px solid rgba(251,191,36,0.6)",
           borderRadius:20, padding:"28px 24px 24px",
           maxWidth:380, width:"100%",
@@ -19081,7 +19338,7 @@ function App() {
           )
           /* 本文 */
           , React.createElement('p', { style: {
-            fontSize:15, color:"#e2e8f0", lineHeight:1.85,
+            fontSize:15, color:T.modal_renewText, lineHeight:1.85,
             margin:"0 0 24px", letterSpacing:0.3,
           }}, "年休所得時間と所定労働時間の入力ミス、使用記録の記入漏れがないか確認してください！")
           /* 閉じるボタン */
@@ -19100,8 +19357,8 @@ function App() {
       /* ─── Bottom Tab Bar ─── */
       , React.createElement('div', { style: {
         position:"fixed", bottom:0, left:0, right:0, zIndex:100,
-        background:"rgba(10,18,35,0.96)", backdropFilter:"blur(16px)",
-        borderTop:"1px solid rgba(99,102,241,0.35)",
+        background:T.tab_bg, backdropFilter:"blur(16px)",
+        borderTop:T.tab_border,
         display:"flex", alignItems:"stretch",
         paddingBottom:"env(safe-area-inset-bottom, 0px)",
       }}
